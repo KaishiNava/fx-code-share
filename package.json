@@ -6,7 +6,7 @@
   "engines": {
     "node": ">=18"
   },
-  "scripts": {
-    "hash": "node hash-password.js"
+  "dependencies": {
+    "bcryptjs": "^3.0.2"
   }
 }
