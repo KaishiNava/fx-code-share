@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1"
+    >
+
+    <meta
+        name="robots"
+        content="noindex,nofollow,noarchive"
+    >
+
+    <title>FX Project — Admin</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+        :root {
+            --bg: #050505;
+            --panel: #0c0c0c;
+            --panel2: #111;
+            --border: rgba(255,255,255,.09);
+            --hover: rgba(255,255,255,.17);
+            --text: #f5f5f5;
+            --muted: #858585;
+            --green: #45d483;
+            --red: #ff5757;
+            --radius: 18px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(
+                    circle at 50% -20%,
+                    rgba(255,255,255,.08),
+                    transparent 35%
+                ),
+                var(--bg);
+            color: var(--text);
+            font-family: Inter, sans-serif;
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .login {
+            min-height: 100vh;
+            display: grid;
+            place-items: center;
+            padding: 20px;
+        }
+
+        .login-box {
+            width: min(420px, 100%);
+            padding: 28px;
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: rgba(255,255,255,.035);
+            box-shadow: 0 30px 100px rgba(0,0,0,.5);
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            background: white;
+            color: black;
+            border-radius: 15px;
+            font-weight: 900;
+            margin-bottom: 22px;
+        }
+
+        .login h1 {
+            margin: 0;
+            font-size: 28px;
+            letter-spacing: -.05em;
+        }
+
+        .login p {
+            margin: 8px 0 25px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 14px;
+        }
+
+        .field label {
+            font-size: 11px;
+            color: #aaa;
+            font-weight: 600;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            border: 1px solid var(--border);
+            outline: none;
+            border-radius: 12px;
+            background: rgba(255,255,255,.035);
+            color: white;
+            padding: 12px 13px;
+            transition: .2s;
+        }
+
+        input {
+            height: 46px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--hover);
+            background: rgba(255,255,255,.055);
+        }
+
+        .primary {
+            width: 100%;
+            height: 46px;
+            border: 0;
+            border-radius: 12px;
+            background: white;
+            color: black;
+            font-weight: 700;
+        }
+
+        .error {
+            margin-top: 12px;
+            color: var(--red);
+            font-size: 11px;
+        }
+
+        .app {
+            min-height: 100vh;
+        }
+
+        .topbar {
+            height: 68px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            border-bottom: 1px solid var(--border);
+            background: rgba(5,5,5,.8);
+            backdrop-filter: blur(20px);
+        }
+
+        .topbar-inner {
+            width: min(1180px, calc(100% - 28px));
+            height: 100%;
+            margin: auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            font-weight: 800;
+        }
+
+        .brand-icon {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: white;
+            color: black;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .brand-text small {
+            display: block;
+            margin-top: 2px;
+            color: #666;
+            font-size: 9px;
+            letter-spacing: .06em;
+        }
+
+        .logout {
+            border: 1px solid var(--border);
+            background: #111;
+            color: #ddd;
+            border-radius: 10px;
+            padding: 8px 12px;
+            font-size: 11px;
+        }
+
+        .main {
+            width: min(1180px, calc(100% - 28px));
+            margin: auto;
+            padding: 35px 0 70px;
+        }
+
+        .headline {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .headline h1 {
+            margin: 0;
+            font-size: clamp(32px, 6vw, 55px);
+            letter-spacing: -.07em;
+        }
+
+        .headline p {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .new-btn {
+            border: 0;
+            background: white;
+            color: black;
+            padding: 11px 15px;
+            border-radius: 11px;
+            font-size: 11px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 11px;
+            margin-bottom: 25px;
+        }
+
+        .stat {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255,255,255,.03);
+        }
+
+        .stat-label {
+            color: #777;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        .stat-value {
+            margin-top: 8px;
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            background: rgba(255,255,255,.025);
+        }
+
+        .panel-head {
+            min-height: 62px;
+            padding: 12px 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .search {
+            width: 230px;
+            height: 38px;
+            padding: 0 11px;
+            font-size: 11px;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 14px 15px;
+            border-bottom: 1px solid rgba(255,255,255,.055);
+        }
+
+        th {
+            color: #666;
+            font-size: 9px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+        }
+
+        td {
+            color: #ccc;
+            font-size: 11px;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .title-cell {
+            color: white;
+            font-weight: 600;
+        }
+
+        .file-cell {
+            font-family: "JetBrains Mono", monospace;
+            color: #777;
+            font-size: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 7px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            background: #111;
+            color: #aaa;
+            font-size: 9px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .small-btn {
+            border: 1px solid var(--border);
+            background: #111;
+            color: #ddd;
+            border-radius: 8px;
+            padding: 7px 9px;
+            font-size: 9px;
+        }
+
+        .small-btn.danger {
+            color: #ff7777;
+        }
+
+        .empty {
+            padding: 60px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: none;
+            padding: 15px;
+            background: rgba(0,0,0,.8);
+            backdrop-filter: blur(15px);
+        }
+
+        .modal.active {
+            display: grid;
+            place-items: center;
+        }
+
+        .modal-box {
+            width: min(760px, 100%);
+            max-height: 92vh;
+            overflow-y: auto;
+            border: 1px solid var(--hover);
+            border-radius: 20px;
+            background: #090909;
+            box-shadow: 0 30px 100px rgba(0,0,0,.7);
+        }
+
+        .modal-head {
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .modal-head h2 {
+            margin: 0;
+            font-size: 15px;
+        }
+
+        .close {
+            border: 1px solid var(--border);
+            background: #111;
+            color: #aaa;
+            border-radius: 8px;
+            width: 32px;
+            height: 32px;
+        }
+
+        .modal-body {
+            padding: 18px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .file-picker {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            min-height: 52px;
+            padding: 10px 12px;
+            border: 1px dashed var(--border);
+            border-radius: 12px;
+            color: #aaa;
+            font-size: 11px;
+        }
+
+        .file-picker input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview {
+            margin-top: 12px;
+            max-height: 300px;
+            overflow: auto;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: #050505;
+        }
+
+        .preview pre {
+            margin: 0;
+            padding: 15px;
+            min-width: max-content;
+            color: #bbb;
+            font: 11px/1.7 "JetBrains Mono", monospace;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            padding: 14px 18px 18px;
+        }
+
+        .secondary {
+            border: 1px solid var(--border);
+            background: #111;
+            color: #ddd;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 11px;
+        }
+
+        .save {
+            border: 0;
+            background: white;
+            color: black;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .toast {
+            position: fixed;
+            z-index: 200;
+            left: 50%;
+            bottom: 22px;
+            transform: translate(-50%, 20px);
+            opacity: 0;
+            padding: 11px 15px;
+            border: 1px solid var(--hover);
+            border-radius: 12px;
+            background: #111;
+            color: #eee;
+            font-size: 11px;
+            transition: .25s;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translate(-50%, 0);
+            opacity: 1;
+        }
+
+        @media(max-width:700px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .headline {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .new-btn {
+                width: 100%;
+            }
+
+            .panel-head {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .search {
+                width: 100%;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                padding-top: 25px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<section
+    id="loginScreen"
+    class="login"
+>
+
+    <div class="login-box">
+
+        <div class="logo">
+            FX
+        </div>
+
+        <h1>
+            Admin Console
+        </h1>
+
+        <p>
+            Masuk ke dashboard FX Project
+            untuk mengelola source code yang
+            tersimpan di GitHub.
+        </p>
+
+        <form id="loginForm">
+
+            <div class="field">
+
+                <label>
+                    ADMIN PASSWORD
+                </label>
+
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Masukkan password..."
+                    autocomplete="current-password"
+                    required
+                >
+
+            </div>
+
+            <button
+                class="primary"
+                type="submit"
+            >
+                Sign In
+            </button>
+
+            <div
+                id="loginError"
+                class="error"
+            ></div>
+
+        </form>
+
+    </div>
+
+</section>
+
+<section
+    id="app"
+    class="app hidden"
+>
+
+    <header class="topbar">
+
+        <div class="topbar-inner">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    FX
+                </div>
+
+                <div class="brand-text">
+                    FX Project
+                    <small>
+                        ADMIN CONSOLE
+                    </small>
+                </div>
+
+            </div>
+
+            <button
+                id="logout"
+                class="logout"
+            >
+                Logout
+            </button>
+
+        </div>
+
+    </header>
+
+    <main class="main">
+
+        <div class="headline">
+
+            <div>
+                <h1>
+                    Dashboard
+                </h1>
+
+                <p>
+                    Kelola semua source code
+                    FX Project.
+                </p>
+            </div>
+
+            <button
+                id="newPost"
+                class="new-btn"
+            >
+                + Upload Code
+            </button>
+
+        </div>
+
+        <section class="stats">
+
+            <div class="stat">
+                <div class="stat-label">
+                    Total Source
+                </div>
+
+                <div
+                    id="statTotal"
+                    class="stat-value"
+                >
+                    0
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">
+                    Total Size
+                </div>
+
+                <div
+                    id="statSize"
+                    class="stat-value"
+                >
+                    0 B
+                </div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-label">
+                    Languages
+                </div>
+
+                <div
+                    id="statLanguages"
+                    class="stat-value"
+                >
+                    0
+                </div>
+            </div>
+
+        </section>
+
+        <section class="panel">
+
+            <div class="panel-head">
+
+                <div class="panel-title">
+                    SOURCE LIBRARY
+                </div>
+
+                <input
+                    id="adminSearch"
+                    class="search"
+                    type="search"
+                    placeholder="Search..."
+                >
+
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>
+                                Project
+                            </th>
+
+                            <th>
+                                File
+                            </th>
+
+                            <th>
+                                Language
+                            </th>
+
+                            <th>
+                                Size
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody
+                        id="tableBody"
+                    ></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+</section>
+
+<div
+    id="editorModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-head">
+
+            <h2 id="modalTitle">
+                Upload Code
+            </h2>
+
+            <button
+                id="closeModal"
+                class="close"
+            >
+                ×
+            </button>
+
+        </div>
+
+        <form id="postForm">
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="field">
+
+                        <label>
+                            TITLE
+                        </label>
+
+                        <input
+                            id="title"
+                            maxlength="140"
+                            placeholder="Contoh: WhatsApp Bot"
+                            required
+                        >
+
+                    </div>
+
+                    <div class="field">
+
+                        <label>
+                            FILE NAME
+                        </label>
+
+                        <input
+                            id="filename"
+                            maxlength="180"
+                            placeholder="bot.js"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="field">
+
+                    <label>
+                        DESCRIPTION
+                    </label>
+
+                    <textarea
+                        id="description"
+                        maxlength="500"
+                        placeholder="Jelaskan source code ini..."
+                    ></textarea>
+
+                </div>
+
+                <div class="field">
+
+                    <label>
+                        SOURCE FILE
+                    </label>
+
+                    <div class="file-picker">
+
+                        <span id="fileNameLabel">
+                            Pilih file dari perangkat
+                        </span>
+
+                        <strong>
+                            Browse
+                        </strong>
+
+                        <input
+                            id="fileInput"
+                            type="file"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="field">
+
+                    <label>
+                        CODE
+                    </label>
+
+                    <textarea
+                        id="content"
+                        style="font-family:JetBrains Mono,monospace;min-height:260px"
+                        placeholder="Atau paste source code di sini..."
+                        required
+                    ></textarea>
+
+                </div>
+
+                <div class="preview">
+                    <pre id="preview"></pre>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button
+                    id="cancelModal"
+                    type="button"
+                    class="secondary"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    id="savePost"
+                    type="submit"
+                    class="save"
+                >
+                    Save Code
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+<script>
+'use strict';
+
+const state = {
+    posts: [],
+    editing: null
+};
+
+const loginScreen =
+    document.getElementById('loginScreen');
+
+const app =
+    document.getElementById('app');
+
+const editorModal =
+    document.getElementById('editorModal');
+
+const loginForm =
+    document.getElementById('loginForm');
+
+const loginError =
+    document.getElementById('loginError');
+
+const postForm =
+    document.getElementById('postForm');
+
+const titleInput =
+    document.getElementById('title');
+
+const filenameInput =
+    document.getElementById('filename');
+
+const descriptionInput =
+    document.getElementById('description');
+
+const contentInput =
+    document.getElementById('content');
+
+const fileInput =
+    document.getElementById('fileInput');
+
+const fileNameLabel =
+    document.getElementById('fileNameLabel');
+
+const preview =
+    document.getElementById('preview');
+
+const tableBody =
+    document.getElementById('tableBody');
+
+const adminSearch =
+    document.getElementById('adminSearch');
+
+const toast =
+    document.getElementById('toast');
+
+function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+function formatSize(bytes) {
+    if (!bytes) return '0 B';
+
+    if (bytes < 1024) {
+        return `${bytes} B`;
+    }
+
+    if (bytes < 1024 * 1024) {
+        return `${(bytes / 1024).toFixed(1)} KB`;
+    }
+
+    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+}
+
+function showToast(message) {
+    toast.textContent = message;
+
+    toast.classList.add('show');
+
+    clearTimeout(
+        showToast.timer
+    );
+
+    showToast.timer =
+        setTimeout(() => {
+            toast.classList.remove(
+                'show'
+            );
+        }, 2500);
+}
+
+async function api(
+    action,
+    options = {}
+) {
+    const response =
+        await fetch(
+            `/api?action=${encodeURIComponent(action)}`,
+            {
+                credentials: 'same-origin',
+                ...options,
+                headers: {
+                    'Content-Type':
+                        'application/json',
+                    ...(options.headers || {})
+                }
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if (
+        !response.ok ||
+        data.ok === false
+    ) {
+        const error =
+            new Error(
+                data.error ||
+                'Request gagal.'
+            );
+
+        error.status =
+            response.status;
+
+        throw error;
+    }
+
+    return data;
+}
+
+async function checkSession() {
+    try {
+        const data =
+            await api('me');
+
+        if (data.authenticated) {
+            showApp();
+            await loadPosts();
+        } else {
+            showLogin();
+        }
+    } catch {
+        showLogin();
+    }
+}
+
+function showLogin() {
+    loginScreen.classList.remove(
+        'hidden'
+    );
+
+    app.classList.add(
+        'hidden'
+    );
+}
+
+function showApp() {
+    loginScreen.classList.add(
+        'hidden'
+    );
+
+    app.classList.remove(
+        'hidden'
+    );
+}
+
+loginForm.addEventListener(
+    'submit',
+    async event => {
+        event.preventDefault();
+
+        loginError.textContent = '';
+
+        const password =
+            document.getElementById(
+                'password'
+            ).value;
+
+        try {
+            await api(
+                'login',
+                {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        password
+                    })
+                }
+            );
+
+            document.getElementById(
+                'password'
+            ).value = '';
+
+            showApp();
+
+            await loadPosts();
+
+        } catch (error) {
+            loginError.textContent =
+                error.message;
+        }
+    }
+);
+
+document
+    .getElementById('logout')
+    .addEventListener(
+        'click',
+        async () => {
+            try {
+                await api(
+                    'logout',
+                    {
+                        method: 'POST'
+                    }
+                );
+            } catch {}
+
+            showLogin();
+        }
+    );
+
+async function loadPosts() {
+    try {
+        const data =
+            await api('admin-list');
+
+        state.posts =
+            Array.isArray(data.posts)
+                ? data.posts
+                : [];
+
+        renderStats();
+        renderTable();
+
+    } catch (error) {
+        if (
+            error.status === 401
+        ) {
+            showLogin();
+            return;
+        }
+
+        showToast(
+            error.message
+        );
+    }
+}
+
+function renderStats() {
+    const total =
+        state.posts.length;
+
+    const size =
+        state.posts.reduce(
+            (sum, post) =>
+                sum + Number(post.size || 0),
+            0
+        );
+
+    const languages =
+        new Set(
+            state.posts.map(
+                post => post.language
+            )
+        );
+
+    document.getElementById(
+        'statTotal'
+    ).textContent = total;
+
+    document.getElementById(
+        'statSize'
+    ).textContent =
+        formatSize(size);
+
+    document.getElementById(
+        'statLanguages'
+    ).textContent =
+        languages.size;
+}
+
+function renderTable() {
+    const keyword =
+        adminSearch.value
+            .trim()
+            .toLowerCase();
+
+    const posts =
+        state.posts.filter(post => {
+
+            if (!keyword) {
+                return true;
+            }
+
+            return [
+                post.title,
+                post.description,
+                post.filename,
+                post.language
+            ]
+                .join(' ')
+                .toLowerCase()
+                .includes(keyword);
+        });
+
+    if (!posts.length) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="5">
+                    <div class="empty">
+                        Belum ada source.
+                    </div>
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tableBody.innerHTML =
+        posts.map(post => `
+            <tr>
+
+                <td>
+                    <div class="title-cell">
+                        ${escapeHtml(post.title)}
+                    </div>
+                </td>
+
+                <td>
+                    <div class="file-cell">
+                        ${escapeHtml(post.filename)}
+                    </div>
+                </td>
+
+                <td>
+                    <span class="badge">
+                        ${escapeHtml(post.language)}
+                    </span>
+                </td>
+
+                <td>
+                    ${formatSize(post.size)}
+                </td>
+
+                <td>
+
+                    <div class="actions">
+
+                        <button
+                            class="small-btn"
+                            data-edit="${escapeHtml(post.id)}"
+                        >
+                            Edit
+                        </button>
+
+                        <button
+                            class="small-btn"
+                            data-view="${escapeHtml(post.id)}"
+                        >
+                            View
+                        </button>
+
+                        <button
+                            class="small-btn danger"
+                            data-delete="${escapeHtml(post.id)}"
+                        >
+                            Delete
+                        </button>
+
+                    </div>
+
+                </td>
+
+            </tr>
+        `).join('');
+}
+
+function openModal(post = null) {
+    state.editing =
+        post ? post.id : null;
+
+    document.getElementById(
+        'modalTitle'
+    ).textContent =
+        post
+            ? 'Edit Code'
+            : 'Upload Code';
+
+    titleInput.value =
+        post?.title || '';
+
+    filenameInput.value =
+        post?.filename || '';
+
+    descriptionInput.value =
+        post?.description || '';
+
+    contentInput.value = '';
+
+    preview.textContent =
+        '';
+
+    fileInput.value =
+        '';
+
+    fileNameLabel.textContent =
+        post
+            ? 'Pilih file untuk mengganti source (opsional)'
+            : 'Pilih file dari perangkat';
+
+    editorModal.classList.add(
+        'active'
+    );
+
+    titleInput.focus();
+}
+
+function closeModal() {
+    editorModal.classList.remove(
+        'active'
+    );
+
+    state.editing = null;
+
+    postForm.reset();
+
+    preview.textContent = '';
+
+    fileNameLabel.textContent =
+        'Pilih file dari perangkat';
+}
+
+document
+    .getElementById('newPost')
+    .addEventListener(
+        'click',
+        () => openModal()
+    );
+
+document
+    .getElementById('closeModal')
+    .addEventListener(
+        'click',
+        closeModal
+    );
+
+document
+    .getElementById('cancelModal')
+    .addEventListener(
+        'click',
+        closeModal
+    );
+
+editorModal.addEventListener(
+    'click',
+    event => {
+        if (
+            event.target ===
+            editorModal
+        ) {
+            closeModal();
+        }
+    }
+);
+
+fileInput.addEventListener(
+    'change',
+    async () => {
+        const file =
+            fileInput.files?.[0];
+
+        if (!file) return;
+
+        if (
+            file.size >
+            2 * 1024 * 1024
+        ) {
+            showToast(
+                'File maksimal 2 MB.'
+            );
+
+            fileInput.value = '';
+            return;
+        }
+
+        filenameInput.value =
+            file.name;
+
+        fileNameLabel.textContent =
+            `${file.name} • ${formatSize(file.size)}`;
+
+        try {
+            const text =
+                await file.text();
+
+            contentInput.value =
+                text;
+
+            preview.textContent =
+                text.slice(0, 10000);
+
+        } catch {
+            showToast(
+                'File tidak bisa dibaca sebagai text.'
+            );
+        }
+    }
+);
+
+contentInput.addEventListener(
+    'input',
+    () => {
+        preview.textContent =
+            contentInput.value.slice(
+                0,
+                10000
+            );
+    }
+);
+
+postForm.addEventListener(
+    'submit',
+    async event => {
+        event.preventDefault();
+
+        const title =
+            titleInput.value.trim();
+
+        const filename =
+            filenameInput.value.trim();
+
+        const description =
+            descriptionInput.value.trim();
+
+        const content =
+            contentInput.value;
+
+        if (!title) {
+            showToast(
+                'Judul wajib diisi.'
+            );
+
+            return;
+        }
+
+        if (!filename) {
+            showToast(
+                'Nama file wajib diisi.'
+            );
+
+            return;
+        }
+
+        if (!content.trim()) {
+            showToast(
+                'Isi code wajib diisi.'
+            );
+
+            return;
+        }
+
+        if (
+            new Blob([content]).size >
+            2 * 1024 * 1024
+        ) {
+            showToast(
+                'Code maksimal 2 MB.'
+            );
+
+            return;
+        }
+
+        const saveButton =
+            document.getElementById(
+                'savePost'
+            );
+
+        saveButton.disabled = true;
+        saveButton.textContent =
+            'Saving...';
+
+        try {
+            const payload = {
+                title,
+                filename,
+                description,
+                content
+            };
+
+            if (state.editing) {
+                payload.id =
+                    state.editing;
+
+                await api(
+                    'edit',
+                    {
+                        method: 'POST',
+                        body: JSON.stringify(
+                            payload
+                        )
+                    }
+                );
+
+                showToast(
+                    'Source berhasil diperbarui.'
+                );
+
+            } else {
+                await api(
+                    'upload',
+                    {
+                        method: 'POST',
+                        body: JSON.stringify(
+                            payload
+                        )
+                    }
+                );
+
+                showToast(
+                    'Source berhasil diupload.'
+                );
+            }
+
+            closeModal();
+
+            await loadPosts();
+
+        } catch (error) {
+            if (
+                error.status === 401
+            ) {
+                showLogin();
+            }
+
+            showToast(
+                error.message
+            );
+
+        } finally {
+            saveButton.disabled =
+                false;
+
+            saveButton.textContent =
+                'Save Code';
+        }
+    }
+);
+
+tableBody.addEventListener(
+    'click',
+    async event => {
+
+        const editButton =
+            event.target.closest(
+                '[data-edit]'
+            );
+
+        const deleteButton =
+            event.target.closest(
+                '[data-delete]'
+            );
+
+        const viewButton =
+            event.target.closest(
+                '[data-view]'
+            );
+
+        if (editButton) {
+            const post =
+                state.posts.find(
+                    item =>
+                        item.id ===
+                        editButton.dataset.edit
+                );
+
+            if (!post) return;
+
+            try {
+                const data =
+                    await api(
+                        `get&id=${encodeURIComponent(post.id)}`
+                    );
+
+                openModal({
+                    ...data.post,
+                    content: data.code
+                });
+
+                contentInput.value =
+                    data.code;
+
+                preview.textContent =
+                    data.code.slice(
+                        0,
+                        10000
+                    );
+
+            } catch (error) {
+                showToast(
+                    error.message
+                );
+            }
+        }
+
+        if (viewButton) {
+            const id =
+                viewButton.dataset.view;
+
+            window.open(
+                `/share/${encodeURIComponent(id)}`,
+                '_blank',
+                'noopener,noreferrer'
+            );
+        }
+
+        if (deleteButton) {
+            const id =
+                deleteButton.dataset.delete;
+
+            const post =
+                state.posts.find(
+                    item =>
+                        item.id === id
+                );
+
+            if (!post) return;
+
+            const confirmed =
+                confirm(
+                    `Hapus "${post.title}"?\n\nFile akan dihapus dari GitHub dan tidak bisa dibatalkan dari dashboard.`
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            try {
+                await api(
+                    'delete',
+                    {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            id
+                        })
+                    }
+                );
+
+                showToast(
+                    'Source berhasil dihapus.'
+                );
+
+                await loadPosts();
+
+            } catch (error) {
+                showToast(
+                    error.message
+                );
+            }
+        }
+    }
+);
+
+adminSearch.addEventListener(
+    'input',
+    renderTable
+);
+
+checkSession();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+  "name": "fx-code-share",
+  "version": "1.0.0",
+  "private": true,
+  "description": "FX Project Code Share powered by Vercel and GitHub",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "hash": "node hash-password.js"
+  }
+}
