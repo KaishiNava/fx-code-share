@@ -1,6 +1,7 @@
 'use strict';
 
 const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const SESSION_DURATION = 8 * 60 * 60;
@@ -54,7 +55,9 @@ function requiredEnv(name) {
     const value = process.env[name];
 
     if (!value) {
-        throw new Error(`Environment variable ${name} belum diatur.`);
+        throw new Error(
+            `Environment variable ${name} belum diatur.`
+        );
     }
 
     return value;
@@ -85,7 +88,11 @@ function githubUrl(config, filePath) {
         .map(part => encodeURIComponent(part))
         .join('/');
 
-    return `https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}/contents/${encodedPath}`;
+    return `https://api.github.com/repos/${encodeURIComponent(
+        config.owner
+    )}/${encodeURIComponent(
+        config.repo
+    )}/contents/${encodedPath}`;
 }
 
 async function githubRequest(config, url, options = {}) {
@@ -137,13 +144,18 @@ async function getGithubFile(config, filePath) {
     }
 
     const content = Buffer
-        .from(result.data.content.replace(/\n/g, ''), 'base64')
+        .from(
+            result.data.content.replace(/\n/g, ''),
+            'base64'
+        )
         .toString('utf8');
 
     return {
         content,
         sha: result.data.sha,
-        size: result.data.size || Buffer.byteLength(content)
+        size:
+            result.data.size ||
+            Buffer.byteLength(content)
     };
 }
 
@@ -157,10 +169,11 @@ async function putGithubFile(
 
     for (let attempt = 0; attempt < 4; attempt++) {
         try {
-            const existing = await getGithubFile(
-                config,
-                filePath
-            );
+            const existing =
+                await getGithubFile(
+                    config,
+                    filePath
+                );
 
             const body = {
                 message,
@@ -174,17 +187,22 @@ async function putGithubFile(
                 body.sha = existing.sha;
             }
 
-            const result = await githubRequest(
-                config,
-                githubUrl(config, filePath),
-                {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(body)
-                }
-            );
+            const result =
+                await githubRequest(
+                    config,
+                    githubUrl(
+                        config,
+                        filePath
+                    ),
+                    {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+                        body: JSON.stringify(body)
+                    }
+                );
 
             if (result.ok) {
                 return result.data;
@@ -196,7 +214,10 @@ async function putGithubFile(
                 );
 
                 await new Promise(resolve =>
-                    setTimeout(resolve, 250 * (attempt + 1))
+                    setTimeout(
+                        resolve,
+                        250 * (attempt + 1)
+                    )
                 );
 
                 continue;
@@ -211,13 +232,19 @@ async function putGithubFile(
 
             if (attempt < 3) {
                 await new Promise(resolve =>
-                    setTimeout(resolve, 250 * (attempt + 1))
+                    setTimeout(
+                        resolve,
+                        250 * (attempt + 1)
+                    )
                 );
             }
         }
     }
 
-    throw lastError || new Error('GitHub update gagal.');
+    throw (
+        lastError ||
+        new Error('GitHub update gagal.')
+    );
 }
 
 async function deleteGithubFile(
@@ -228,30 +255,36 @@ async function deleteGithubFile(
     let lastError = null;
 
     for (let attempt = 0; attempt < 4; attempt++) {
-        const existing = await getGithubFile(
-            config,
-            filePath
-        );
+        const existing =
+            await getGithubFile(
+                config,
+                filePath
+            );
 
         if (!existing) {
             return true;
         }
 
-        const result = await githubRequest(
-            config,
-            githubUrl(config, filePath),
-            {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    message,
-                    sha: existing.sha,
-                    branch: config.branch
-                })
-            }
-        );
+        const result =
+            await githubRequest(
+                config,
+                githubUrl(
+                    config,
+                    filePath
+                ),
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+                    body: JSON.stringify({
+                        message,
+                        sha: existing.sha,
+                        branch: config.branch
+                    })
+                }
+            );
 
         if (result.ok) {
             return true;
@@ -263,7 +296,10 @@ async function deleteGithubFile(
             );
 
             await new Promise(resolve =>
-                setTimeout(resolve, 250 * (attempt + 1))
+                setTimeout(
+                    resolve,
+                    250 * (attempt + 1)
+                )
             );
 
             continue;
@@ -275,14 +311,20 @@ async function deleteGithubFile(
         );
     }
 
-    throw lastError || new Error('GitHub delete gagal.');
+    throw (
+        lastError ||
+        new Error('GitHub delete gagal.')
+    );
 }
 
 function safeId() {
     return crypto
         .randomBytes(9)
         .toString('base64url')
-        .replace(/[^a-zA-Z0-9_-]/g, '')
+        .replace(
+            /[^a-zA-Z0-9_-]/g,
+            ''
+        )
         .slice(0, 12);
 }
 
@@ -294,14 +336,19 @@ function cleanText(value, maxLength) {
 }
 
 function safeFilename(filename) {
-    let value = String(filename || 'untitled.txt')
+    let value = String(
+        filename || 'untitled.txt'
+    )
         .replace(/\\/g, '/')
         .split('/')
         .pop()
         .trim();
 
     value = value
-        .replace(/[<>:"|?*\x00-\x1F]/g, '_')
+        .replace(
+            /[<>:"|?*\x00-\x1F]/g,
+            '_'
+        )
         .replace(/\s+/g, '_');
 
     if (!value) {
@@ -316,11 +363,14 @@ function getExtension(filename) {
         .toLowerCase()
         .match(/\.([a-z0-9]+)$/);
 
-    return match ? match[1] : 'txt';
+    return match
+        ? match[1]
+        : 'txt';
 }
 
 function detectLanguage(filename) {
-    const ext = getExtension(filename);
+    const ext =
+        getExtension(filename);
 
     if (EXTENSIONS[ext]) {
         return EXTENSIONS[ext];
@@ -329,7 +379,10 @@ function detectLanguage(filename) {
     return 'Text';
 }
 
-function parseJsonSafely(content, fallback) {
+function parseJsonSafely(
+    content,
+    fallback
+) {
     try {
         return JSON.parse(content);
     } catch {
@@ -338,19 +391,21 @@ function parseJsonSafely(content, fallback) {
 }
 
 async function getIndex(config) {
-    const file = await getGithubFile(
-        config,
-        'data/index.json'
-    );
+    const file =
+        await getGithubFile(
+            config,
+            'data/index.json'
+        );
 
     if (!file) {
         return [];
     }
 
-    const parsed = parseJsonSafely(
-        file.content,
-        []
-    );
+    const parsed =
+        parseJsonSafely(
+            file.content,
+            []
+        );
 
     if (!Array.isArray(parsed)) {
         return [];
@@ -359,17 +414,30 @@ async function getIndex(config) {
     return parsed;
 }
 
-async function saveIndex(config, posts) {
+async function saveIndex(
+    config,
+    posts
+) {
     const sorted = [...posts].sort(
         (a, b) =>
-            new Date(b.updatedAt || b.createdAt).getTime() -
-            new Date(a.updatedAt || a.createdAt).getTime()
+            new Date(
+                b.updatedAt ||
+                b.createdAt
+            ).getTime() -
+            new Date(
+                a.updatedAt ||
+                a.createdAt
+            ).getTime()
     );
 
     await putGithubFile(
         config,
         'data/index.json',
-        JSON.stringify(sorted, null, 2),
+        JSON.stringify(
+            sorted,
+            null,
+            2
+        ),
         'FX Project: update posts index'
     );
 
@@ -377,55 +445,76 @@ async function saveIndex(config, posts) {
 }
 
 function parseCookies(req) {
-    const header = req.headers.cookie || '';
+    const header =
+        req.headers.cookie || '';
 
     const cookies = {};
 
-    header.split(';').forEach(part => {
-        const index = part.indexOf('=');
+    header
+        .split(';')
+        .forEach(part => {
+            const index =
+                part.indexOf('=');
 
-        if (index === -1) return;
+            if (index === -1) {
+                return;
+            }
 
-        const key = part
-            .slice(0, index)
-            .trim();
+            const key =
+                part
+                    .slice(0, index)
+                    .trim();
 
-        const value = part
-            .slice(index + 1)
-            .trim();
+            const value =
+                part
+                    .slice(index + 1)
+                    .trim();
 
-        cookies[key] = value;
-    });
+            cookies[key] = value;
+        });
 
     return cookies;
 }
 
-function signSession(payload, secret) {
+function signSession(
+    payload,
+    secret
+) {
     return crypto
-        .createHmac('sha256', secret)
+        .createHmac(
+            'sha256',
+            secret
+        )
         .update(payload)
         .digest('base64url');
 }
 
 function createSession(secret) {
-    const expires = Math.floor(
-        Date.now() / 1000
-    ) + SESSION_DURATION;
+    const expires =
+        Math.floor(
+            Date.now() / 1000
+        ) + SESSION_DURATION;
 
-    const nonce = crypto
-        .randomBytes(16)
-        .toString('base64url');
+    const nonce =
+        crypto
+            .randomBytes(16)
+            .toString('base64url');
 
-    const payload = `${expires}.${nonce}`;
+    const payload =
+        `${expires}.${nonce}`;
 
-    const signature = signSession(
-        payload,
-        secret
-    );
+    const signature =
+        signSession(
+            payload,
+            secret
+        );
 
-    const token = Buffer
-        .from(`${payload}.${signature}`)
-        .toString('base64url');
+    const token =
+        Buffer
+            .from(
+                `${payload}.${signature}`
+            )
+            .toString('base64url');
 
     return {
         token,
@@ -433,7 +522,10 @@ function createSession(secret) {
     };
 }
 
-function verifySession(token, secret) {
+function verifySession(
+    token,
+    secret
+) {
     if (!token) {
         return false;
     }
@@ -441,14 +533,19 @@ function verifySession(token, secret) {
     let decoded;
 
     try {
-        decoded = Buffer
-            .from(token, 'base64url')
-            .toString('utf8');
+        decoded =
+            Buffer
+                .from(
+                    token,
+                    'base64url'
+                )
+                .toString('utf8');
     } catch {
         return false;
     }
 
-    const parts = decoded.split('.');
+    const parts =
+        decoded.split('.');
 
     if (parts.length !== 3) {
         return false;
@@ -460,13 +557,17 @@ function verifySession(token, secret) {
         signature
     ] = parts;
 
-    const expires = Number(expiresString);
+    const expires =
+        Number(expiresString);
 
     if (!Number.isFinite(expires)) {
         return false;
     }
 
-    if (expires < Math.floor(Date.now() / 1000)) {
+    if (
+        expires <
+        Math.floor(Date.now() / 1000)
+    ) {
         return false;
     }
 
@@ -474,23 +575,34 @@ function verifySession(token, secret) {
         return false;
     }
 
-    const expected = signSession(
-        `${expires}.${nonce}`,
-        secret
-    );
+    const expected =
+        signSession(
+            `${expires}.${nonce}`,
+            secret
+        );
 
-    const a = Buffer.from(signature);
-    const b = Buffer.from(expected);
+    const a =
+        Buffer.from(signature);
+
+    const b =
+        Buffer.from(expected);
 
     if (a.length !== b.length) {
         return false;
     }
 
-    return crypto.timingSafeEqual(a, b);
+    return crypto.timingSafeEqual(
+        a,
+        b
+    );
 }
 
-function isAuthenticated(req, config) {
-    const cookies = parseCookies(req);
+function isAuthenticated(
+    req,
+    config
+) {
+    const cookies =
+        parseCookies(req);
 
     return verifySession(
         cookies.fx_session,
@@ -498,9 +610,13 @@ function isAuthenticated(req, config) {
     );
 }
 
-function sessionCookie(token, maxAge) {
+function sessionCookie(
+    token,
+    maxAge
+) {
     const secure =
-        process.env.NODE_ENV === 'production'
+        process.env.NODE_ENV ===
+        'production'
             ? '; Secure'
             : '';
 
@@ -532,13 +648,19 @@ function sendJson(
         'nosniff'
     );
 
-    Object.entries(headers).forEach(
-        ([key, value]) => {
-            res.setHeader(key, value);
-        }
-    );
+    Object.entries(headers)
+        .forEach(
+            ([key, value]) => {
+                res.setHeader(
+                    key,
+                    value
+                );
+            }
+        );
 
-    res.end(JSON.stringify(data));
+    res.end(
+        JSON.stringify(data)
+    );
 }
 
 function sendError(
@@ -546,10 +668,14 @@ function sendError(
     status,
     message
 ) {
-    sendJson(res, status, {
-        ok: false,
-        error: message
-    });
+    sendJson(
+        res,
+        status,
+        {
+            ok: false,
+            error: message
+        }
+    );
 }
 
 async function readBody(req) {
@@ -560,47 +686,73 @@ async function readBody(req) {
         return req.body;
     }
 
-    return new Promise((resolve, reject) => {
-        let raw = '';
+    return new Promise(
+        (resolve, reject) => {
+            let raw = '';
 
-        req.on('data', chunk => {
-            raw += chunk;
+            req.on(
+                'data',
+                chunk => {
+                    raw += chunk;
 
-            if (Buffer.byteLength(raw) > 4 * 1024 * 1024) {
-                reject(
-                    new Error('Request terlalu besar.')
-                );
+                    if (
+                        Buffer.byteLength(
+                            raw
+                        ) >
+                        4 * 1024 * 1024
+                    ) {
+                        reject(
+                            new Error(
+                                'Request terlalu besar.'
+                            )
+                        );
 
-                req.destroy();
-            }
-        });
+                        req.destroy();
+                    }
+                }
+            );
 
-        req.on('end', () => {
-            if (!raw) {
-                resolve({});
-                return;
-            }
+            req.on(
+                'end',
+                () => {
+                    if (!raw) {
+                        resolve({});
+                        return;
+                    }
 
-            try {
-                resolve(JSON.parse(raw));
-            } catch {
-                reject(
-                    new Error('JSON request tidak valid.')
-                );
-            }
-        });
+                    try {
+                        resolve(
+                            JSON.parse(raw)
+                        );
+                    } catch {
+                        reject(
+                            new Error(
+                                'JSON request tidak valid.'
+                            )
+                        );
+                    }
+                }
+            );
 
-        req.on('error', reject);
-    });
+            req.on(
+                'error',
+                reject
+            );
+        }
+    );
 }
 
-function validateCodeContent(content) {
-    const value = String(content ?? '');
+function validateCodeContent(
+    content
+) {
+    const value =
+        String(content ?? '');
 
-    const bytes = Buffer.byteLength(
-        value,
-        'utf8'
-    );
+    const bytes =
+        Buffer.byteLength(
+            value,
+            'utf8'
+        );
 
     if (bytes > MAX_FILE_SIZE) {
         throw new Error(
@@ -611,15 +763,22 @@ function validateCodeContent(content) {
     return value;
 }
 
-async function loadAdminPasswordHash(config) {
-    if (process.env.ADMIN_PASSWORD_HASH) {
-        return process.env.ADMIN_PASSWORD_HASH;
+async function loadAdminPasswordHash(
+    config
+) {
+    if (
+        process.env.ADMIN_PASSWORD_HASH
+    ) {
+        return process.env
+            .ADMIN_PASSWORD_HASH
+            .trim();
     }
 
-    const file = await getGithubFile(
-        config,
-        'config/admin.json'
-    );
+    const file =
+        await getGithubFile(
+            config,
+            'config/admin.json'
+        );
 
     if (!file) {
         throw new Error(
@@ -627,14 +786,16 @@ async function loadAdminPasswordHash(config) {
         );
     }
 
-    const data = parseJsonSafely(
-        file.content,
-        null
-    );
+    const data =
+        parseJsonSafely(
+            file.content,
+            null
+        );
 
     if (
         !data ||
-        typeof data.passwordHash !== 'string'
+        typeof data.passwordHash !==
+            'string'
     ) {
         throw new Error(
             'passwordHash tidak ditemukan di config/admin.json.'
@@ -644,38 +805,118 @@ async function loadAdminPasswordHash(config) {
     return data.passwordHash.trim();
 }
 
+/*
+|--------------------------------------------------------------------------
+| PASSWORD VERIFICATION
+|--------------------------------------------------------------------------
+|
+| Support:
+|
+| 1. bcrypt:
+|    $2a$...
+|    $2b$...
+|    $2y$...
+|
+| 2. scrypt lama:
+|    salt:hashhex
+|
+*/
+
 function verifyPassword(
     password,
     stored
 ) {
     if (
+        typeof password !== 'string' ||
         !password ||
-        !stored ||
-        !stored.includes(':')
+        typeof stored !== 'string' ||
+        !stored
     ) {
         return false;
     }
 
-    const [
-        salt,
-        hashHex
-    ] = stored.split(':');
+    const hash =
+        stored.trim();
 
-    if (!salt || !hashHex) {
+    /*
+    |--------------------------------------------------------------------------
+    | BCRYPT
+    |--------------------------------------------------------------------------
+    */
+
+    if (
+        hash.startsWith('$2a$') ||
+        hash.startsWith('$2b$') ||
+        hash.startsWith('$2y$')
+    ) {
+        try {
+            return bcrypt.compareSync(
+                password,
+                hash
+            );
+        } catch (error) {
+            console.error(
+                '[FX AUTH] bcrypt verification error:',
+                error
+            );
+
+            return false;
+        }
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SCRYPT LEGACY
+    |--------------------------------------------------------------------------
+    */
+
+    if (!hash.includes(':')) {
+        return false;
+    }
+
+    const separatorIndex =
+        hash.indexOf(':');
+
+    const salt =
+        hash.slice(
+            0,
+            separatorIndex
+        );
+
+    const hashHex =
+        hash.slice(
+            separatorIndex + 1
+        );
+
+    if (
+        !salt ||
+        !hashHex ||
+        !/^[a-fA-F0-9]+$/.test(
+            hashHex
+        )
+    ) {
         return false;
     }
 
     try {
-        const expected = Buffer.from(
-            hashHex,
-            'hex'
-        );
+        const expected =
+            Buffer.from(
+                hashHex,
+                'hex'
+            );
 
-        const actual = crypto.scryptSync(
-            password,
-            salt,
-            expected.length
-        );
+        if (
+            expected.length === 0
+        ) {
+            return false;
+        }
+
+        const actual =
+            crypto.scryptSync(
+                password,
+                salt,
+                expected.length
+            );
 
         if (
             actual.length !==
@@ -688,7 +929,12 @@ function verifyPassword(
             actual,
             expected
         );
-    } catch {
+    } catch (error) {
+        console.error(
+            '[FX AUTH] scrypt verification error:',
+            error
+        );
+
         return false;
     }
 }
@@ -707,16 +953,28 @@ function publicPost(post) {
     };
 }
 
-async function actionList(req, res, config) {
-    const posts = await getIndex(config);
+async function actionList(
+    req,
+    res,
+    config
+) {
+    const posts =
+        await getIndex(config);
 
-    const clean = posts
-        .map(publicPost)
-        .sort(
-            (a, b) =>
-                new Date(b.updatedAt || b.createdAt).getTime() -
-                new Date(a.updatedAt || a.createdAt).getTime()
-        );
+    const clean =
+        posts
+            .map(publicPost)
+            .sort(
+                (a, b) =>
+                    new Date(
+                        b.updatedAt ||
+                        b.createdAt
+                    ).getTime() -
+                    new Date(
+                        a.updatedAt ||
+                        a.createdAt
+                    ).getTime()
+            );
 
     sendJson(
         res,
@@ -733,17 +991,29 @@ async function actionList(req, res, config) {
     );
 }
 
-async function actionGet(req, res, config, id) {
+async function actionGet(
+    req,
+    res,
+    config,
+    id
+) {
     if (!id) {
-        sendError(res, 400, 'ID tidak ada.');
+        sendError(
+            res,
+            400,
+            'ID tidak ada.'
+        );
+
         return;
     }
 
-    const posts = await getIndex(config);
+    const posts =
+        await getIndex(config);
 
-    const post = posts.find(
-        item => item.id === id
-    );
+    const post =
+        posts.find(
+            item => item.id === id
+        );
 
     if (!post) {
         sendError(
@@ -755,10 +1025,11 @@ async function actionGet(req, res, config, id) {
         return;
     }
 
-    const file = await getGithubFile(
-        config,
-        post.storagePath
-    );
+    const file =
+        await getGithubFile(
+            config,
+            post.storagePath
+        );
 
     if (!file) {
         sendError(
@@ -785,12 +1056,18 @@ async function actionGet(req, res, config, id) {
     );
 }
 
-async function actionLogin(req, res, config) {
-    const body = await readBody(req);
+async function actionLogin(
+    req,
+    res,
+    config
+) {
+    const body =
+        await readBody(req);
 
-    const password = String(
-        body.password || ''
-    );
+    const password =
+        String(
+            body.password || ''
+        );
 
     if (!password) {
         sendError(
@@ -803,12 +1080,15 @@ async function actionLogin(req, res, config) {
     }
 
     const storedHash =
-        await loadAdminPasswordHash(config);
+        await loadAdminPasswordHash(
+            config
+        );
 
-    const valid = verifyPassword(
-        password,
-        storedHash
-    );
+    const valid =
+        verifyPassword(
+            password,
+            storedHash
+        );
 
     if (!valid) {
         sendError(
@@ -821,7 +1101,9 @@ async function actionLogin(req, res, config) {
     }
 
     const session =
-        createSession(config.sessionSecret);
+        createSession(
+            config.sessionSecret
+        );
 
     res.setHeader(
         'Set-Cookie',
@@ -831,36 +1113,67 @@ async function actionLogin(req, res, config) {
         )
     );
 
-    sendJson(res, 200, {
-        ok: true,
-        message: 'Login berhasil.',
-        expires: session.expires
-    });
+    sendJson(
+        res,
+        200,
+        {
+            ok: true,
+            message: 'Login berhasil.',
+            expires: session.expires
+        }
+    );
 }
 
-async function actionMe(req, res, config) {
+async function actionMe(
+    req,
+    res,
+    config
+) {
     const authenticated =
-        isAuthenticated(req, config);
+        isAuthenticated(
+            req,
+            config
+        );
 
-    sendJson(res, 200, {
-        ok: true,
-        authenticated
-    });
+    sendJson(
+        res,
+        200,
+        {
+            ok: true,
+            authenticated
+        }
+    );
 }
 
-async function actionLogout(req, res) {
+async function actionLogout(
+    req,
+    res
+) {
     res.setHeader(
         'Set-Cookie',
         sessionCookie('', 0)
     );
 
-    sendJson(res, 200, {
-        ok: true
-    });
+    sendJson(
+        res,
+        200,
+        {
+            ok: true
+        }
+    );
 }
 
-async function actionUpload(req, res, config) {
-    if (!isAuthenticated(req, config)) {
+async function actionUpload(
+    req,
+    res,
+    config
+) {
+    if (
+        !isAuthenticated(
+            req,
+            config
+        )
+    ) {
         sendError(
             res,
             401,
@@ -870,21 +1183,25 @@ async function actionUpload(req, res, config) {
         return;
     }
 
-    const body = await readBody(req);
+    const body =
+        await readBody(req);
 
-    const title = cleanText(
-        body.title,
-        140
-    );
+    const title =
+        cleanText(
+            body.title,
+            140
+        );
 
-    const description = cleanText(
-        body.description,
-        500
-    );
+    const description =
+        cleanText(
+            body.description,
+            500
+        );
 
-    const filename = safeFilename(
-        body.filename
-    );
+    const filename =
+        safeFilename(
+            body.filename
+        );
 
     const code =
         validateCodeContent(
@@ -911,13 +1228,18 @@ async function actionUpload(req, res, config) {
         return;
     }
 
-    const id = safeId();
+    const id =
+        safeId();
 
     const extension =
-        getExtension(filename);
+        getExtension(
+            filename
+        );
 
     const language =
-        detectLanguage(filename);
+        detectLanguage(
+            filename
+        );
 
     const storagePath =
         `files/${id}.${extension}`;
@@ -932,10 +1254,11 @@ async function actionUpload(req, res, config) {
         filename,
         language,
         extension,
-        size: Buffer.byteLength(
-            code,
-            'utf8'
-        ),
+        size:
+            Buffer.byteLength(
+                code,
+                'utf8'
+            ),
         createdAt: now,
         updatedAt: now,
         storagePath
@@ -950,7 +1273,9 @@ async function actionUpload(req, res, config) {
 
     try {
         const posts =
-            await getIndex(config);
+            await getIndex(
+                config
+            );
 
         posts.push(post);
 
@@ -970,15 +1295,30 @@ async function actionUpload(req, res, config) {
         throw error;
     }
 
-    sendJson(res, 201, {
-        ok: true,
-        message: 'Kode berhasil diupload.',
-        post: publicPost(post)
-    });
+    sendJson(
+        res,
+        201,
+        {
+            ok: true,
+            message:
+                'Kode berhasil diupload.',
+            post:
+                publicPost(post)
+        }
+    );
 }
 
-async function actionEdit(req, res, config) {
-    if (!isAuthenticated(req, config)) {
+async function actionEdit(
+    req,
+    res,
+    config
+) {
+    if (
+        !isAuthenticated(
+            req,
+            config
+        )
+    ) {
         sendError(
             res,
             401,
@@ -988,12 +1328,14 @@ async function actionEdit(req, res, config) {
         return;
     }
 
-    const body = await readBody(req);
+    const body =
+        await readBody(req);
 
-    const id = cleanText(
-        body.id,
-        80
-    );
+    const id =
+        cleanText(
+            body.id,
+            80
+        );
 
     if (!id) {
         sendError(
@@ -1006,11 +1348,14 @@ async function actionEdit(req, res, config) {
     }
 
     const posts =
-        await getIndex(config);
+        await getIndex(
+            config
+        );
 
     const index =
         posts.findIndex(
-            item => item.id === id
+            item =>
+                item.id === id
         );
 
     if (index === -1) {
@@ -1026,10 +1371,12 @@ async function actionEdit(req, res, config) {
     const current =
         posts[index];
 
-    const title = cleanText(
-        body.title,
-        140
-    ) || current.title;
+    const title =
+        cleanText(
+            body.title,
+            140
+        ) ||
+        current.title;
 
     const description =
         cleanText(
@@ -1059,10 +1406,14 @@ async function actionEdit(req, res, config) {
     }
 
     const extension =
-        getExtension(filename);
+        getExtension(
+            filename
+        );
 
     const language =
-        detectLanguage(filename);
+        detectLanguage(
+            filename
+        );
 
     let storagePath =
         current.storagePath;
@@ -1070,8 +1421,12 @@ async function actionEdit(req, res, config) {
     const newPath =
         `files/${id}.${extension}`;
 
-    if (newPath !== current.storagePath) {
-        storagePath = newPath;
+    if (
+        newPath !==
+        current.storagePath
+    ) {
+        storagePath =
+            newPath;
     }
 
     await putGithubFile(
@@ -1101,31 +1456,50 @@ async function actionEdit(req, res, config) {
         filename,
         language,
         extension,
-        size: Buffer.byteLength(
-            code,
-            'utf8'
-        ),
+        size:
+            Buffer.byteLength(
+                code,
+                'utf8'
+            ),
         updatedAt:
             new Date().toISOString(),
         storagePath
     };
 
-    posts[index] = updated;
+    posts[index] =
+        updated;
 
     await saveIndex(
         config,
         posts
     );
 
-    sendJson(res, 200, {
-        ok: true,
-        message: 'Kode berhasil diperbarui.',
-        post: publicPost(updated)
-    });
+    sendJson(
+        res,
+        200,
+        {
+            ok: true,
+            message:
+                'Kode berhasil diperbarui.',
+            post:
+                publicPost(
+                    updated
+                )
+        }
+    );
 }
 
-async function actionDelete(req, res, config) {
-    if (!isAuthenticated(req, config)) {
+async function actionDelete(
+    req,
+    res,
+    config
+) {
+    if (
+        !isAuthenticated(
+            req,
+            config
+        )
+    ) {
         sendError(
             res,
             401,
@@ -1135,12 +1509,14 @@ async function actionDelete(req, res, config) {
         return;
     }
 
-    const body = await readBody(req);
+    const body =
+        await readBody(req);
 
-    const id = cleanText(
-        body.id,
-        80
-    );
+    const id =
+        cleanText(
+            body.id,
+            80
+        );
 
     if (!id) {
         sendError(
@@ -1153,11 +1529,14 @@ async function actionDelete(req, res, config) {
     }
 
     const posts =
-        await getIndex(config);
+        await getIndex(
+            config
+        );
 
     const index =
         posts.findIndex(
-            item => item.id === id
+            item =>
+                item.id === id
         );
 
     if (index === -1) {
@@ -1179,21 +1558,38 @@ async function actionDelete(req, res, config) {
         `FX Project: delete ${post.filename}`
     );
 
-    posts.splice(index, 1);
+    posts.splice(
+        index,
+        1
+    );
 
     await saveIndex(
         config,
         posts
     );
 
-    sendJson(res, 200, {
-        ok: true,
-        message: 'Kode berhasil dihapus.'
-    });
+    sendJson(
+        res,
+        200,
+        {
+            ok: true,
+            message:
+                'Kode berhasil dihapus.'
+        }
+    );
 }
 
-async function actionAdminList(req, res, config) {
-    if (!isAuthenticated(req, config)) {
+async function actionAdminList(
+    req,
+    res,
+    config
+) {
+    if (
+        !isAuthenticated(
+            req,
+            config
+        )
+    ) {
         sendError(
             res,
             401,
@@ -1204,184 +1600,208 @@ async function actionAdminList(req, res, config) {
     }
 
     const posts =
-        await getIndex(config);
+        await getIndex(
+            config
+        );
 
-    sendJson(res, 200, {
-        ok: true,
-        count: posts.length,
-        posts
-    });
+    sendJson(
+        res,
+        200,
+        {
+            ok: true,
+            count: posts.length,
+            posts
+        }
+    );
 }
 
-module.exports = async function handler(req, res) {
-    try {
-        const config =
-            getConfig();
+module.exports =
+    async function handler(
+        req,
+        res
+    ) {
+        try {
+            const config =
+                getConfig();
 
-        const url = new URL(
-            req.url,
-            `https://${req.headers.host || 'localhost'}`
-        );
+            const url =
+                new URL(
+                    req.url,
+                    `https://${
+                        req.headers.host ||
+                        'localhost'
+                    }`
+                );
 
-        const action =
-            url.searchParams.get('action') ||
-            '';
+            const action =
+                url.searchParams.get(
+                    'action'
+                ) || '';
 
-        const id =
-            url.searchParams.get('id') ||
-            '';
+            const id =
+                url.searchParams.get(
+                    'id'
+                ) || '';
 
-        if (req.method === 'OPTIONS') {
-            res.statusCode = 204;
-            res.setHeader(
-                'Access-Control-Allow-Origin',
-                '*'
-            );
-            res.setHeader(
-                'Access-Control-Allow-Methods',
-                'GET,POST,OPTIONS'
-            );
-            res.setHeader(
-                'Access-Control-Allow-Headers',
-                'Content-Type'
-            );
-            res.end();
-            return;
-        }
+            if (
+                req.method ===
+                'OPTIONS'
+            ) {
+                res.statusCode = 204;
 
-        if (
-            req.method === 'GET' &&
-            action === 'list'
-        ) {
-            await actionList(
-                req,
+                res.setHeader(
+                    'Access-Control-Allow-Origin',
+                    '*'
+                );
+
+                res.setHeader(
+                    'Access-Control-Allow-Methods',
+                    'GET,POST,OPTIONS'
+                );
+
+                res.setHeader(
+                    'Access-Control-Allow-Headers',
+                    'Content-Type'
+                );
+
+                res.end();
+
+                return;
+            }
+
+            if (
+                req.method === 'GET' &&
+                action === 'list'
+            ) {
+                await actionList(
+                    req,
+                    res,
+                    config
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'GET' &&
+                action === 'get'
+            ) {
+                await actionGet(
+                    req,
+                    res,
+                    config,
+                    id
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'GET' &&
+                action === 'me'
+            ) {
+                await actionMe(
+                    req,
+                    res,
+                    config
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'GET' &&
+                action === 'admin-list'
+            ) {
+                await actionAdminList(
+                    req,
+                    res,
+                    config
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'login'
+            ) {
+                await actionLogin(
+                    req,
+                    res,
+                    config
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'logout'
+            ) {
+                await actionLogout(
+                    req,
+                    res
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'upload'
+            ) {
+                await actionUpload(
+                    req,
+                    res,
+                    config
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'edit'
+            ) {
+                await actionEdit(
+                    req,
+                    res,
+                    config
+                );
+
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'delete'
+            ) {
+                await actionDelete(
+                    req,
+                    res,
+                    config
+                );
+
+                return;
+            }
+
+            sendError(
                 res,
-                config
+                404,
+                'API endpoint tidak ditemukan.'
+            );
+        } catch (error) {
+            console.error(
+                '[FX API ERROR]',
+                error
             );
 
-            return;
-        }
-
-        if (
-            req.method === 'GET' &&
-            action === 'get'
-        ) {
-            await actionGet(
-                req,
+            sendError(
                 res,
-                config,
-                id
+                500,
+                error.message ||
+                'Internal Server Error'
             );
-
-            return;
         }
-
-        if (
-            req.method === 'GET' &&
-            action === 'me'
-        ) {
-            await actionMe(
-                req,
-                res,
-                config
-            );
-
-            return;
-        }
-
-        if (
-            req.method === 'GET' &&
-            action === 'admin-list'
-        ) {
-            await actionAdminList(
-                req,
-                res,
-                config
-            );
-
-            return;
-        }
-
-        if (
-            req.method === 'POST' &&
-            action === 'login'
-        ) {
-            await actionLogin(
-                req,
-                res,
-                config
-            );
-
-            return;
-        }
-
-        if (
-            req.method === 'POST' &&
-            action === 'logout'
-        ) {
-            await actionLogout(
-                req,
-                res
-            );
-
-            return;
-        }
-
-        if (
-            req.method === 'POST' &&
-            action === 'upload'
-        ) {
-            await actionUpload(
-                req,
-                res,
-                config
-            );
-
-            return;
-        }
-
-        if (
-            req.method === 'POST' &&
-            action === 'edit'
-        ) {
-            await actionEdit(
-                req,
-                res,
-                config
-            );
-
-            return;
-        }
-
-        if (
-            req.method === 'POST' &&
-            action === 'delete'
-        ) {
-            await actionDelete(
-                req,
-                res,
-                config
-            );
-
-            return;
-        }
-
-        sendError(
-            res,
-            404,
-            'API endpoint tidak ditemukan.'
-        );
-    } catch (error) {
-        console.error(
-            '[FX API ERROR]',
-            error
-        );
-
-        sendError(
-            res,
-            500,
-            error.message ||
-            'Internal Server Error'
-        );
-    }
-};
+    };
