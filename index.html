@@ -543,6 +543,24 @@
                 font-size: 11px;
             }
         }
+
+        /* FX Project — added page navigation */
+        .menu-wrap { position: relative; flex: 0 0 auto; }
+        .menu-btn { width: 42px; height: 42px; display: grid; place-items: center; gap: 4px; padding: 0; border: 1px solid var(--border); background: rgba(255,255,255,.035); color: #eee; border-radius: 12px; transition: .2s; }
+        .menu-btn:hover, .menu-btn.active { border-color: var(--border-hover); background: rgba(255,255,255,.08); }
+        .menu-lines { width: 17px; display: flex; flex-direction: column; gap: 4px; }
+        .menu-lines span { display: block; width: 100%; height: 1.5px; border-radius: 2px; background: currentColor; transition: .2s; }
+        .menu-btn.active .menu-lines span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+        .menu-btn.active .menu-lines span:nth-child(2) { opacity: 0; }
+        .menu-btn.active .menu-lines span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+        .page-menu { position: absolute; top: calc(100% + 10px); right: 0; width: 210px; padding: 7px; border: 1px solid var(--border-hover); border-radius: 15px; background: rgba(12,12,12,.96); box-shadow: 0 20px 60px rgba(0,0,0,.55); backdrop-filter: blur(20px); opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transform-origin: top right; transition: .18s ease; z-index: 100; }
+        .page-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .page-menu-label { padding: 7px 9px 6px; color: #666; font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+        .page-menu a { display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 10px; color: #bbb; font-size: 11px; transition: .15s; }
+        .page-menu a:hover { color: white; background: rgba(255,255,255,.07); }
+        .page-menu a.active-page { color: white; background: rgba(255,255,255,.09); }
+        .page-menu-icon { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 8px; color: #aaa; font-size: 9px; font-weight: 800; }
+        @media (max-width: 650px) { .menu-btn { width: 40px; height: 40px; } .page-menu { right: 0; width: 195px; } }
     </style>
 </head>
 
@@ -560,9 +578,29 @@
             </div>
         </a>
 
-        <a href="/admin" class="admin-link">
-            Admin
-        </a>
+        <div style="display:flex;align-items:center;gap:7px;">
+            <a href="/admin" class="admin-link">Admin</a>
+            <div class="menu-wrap" id="pageMenuWrap">
+            <button class="menu-btn" id="pageMenuBtn" type="button" aria-label="Buka menu halaman" aria-expanded="false">
+                <span class="menu-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+            </button>
+            <nav class="page-menu" id="pageMenu" aria-label="Navigasi halaman">
+                <div class="page-menu-label">Pages</div>
+                <a href="/" class="active-page">
+                    <span class="page-menu-icon">FX</span>
+                    <span>Code Share</span>
+                </a>
+                <a href="/request.html">
+                    <span class="page-menu-icon">RQ</span>
+                    <span>Request Scrape</span>
+                </a>
+                <a href="/admin">
+                    <span class="page-menu-icon">AD</span>
+                    <span>Admin Console</span>
+                </a>
+            </nav>
+            </div>
+        </div>
 
     </div>
 </header>

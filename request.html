@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#050505">
+    <title>Request Scrape — FX Project</title>
+    <style>
+        :root{--bg:#050505;--panel:rgba(255,255,255,.035);--border:#222;--hover:#3a3a3a;--text:#eee;--muted:#777;--radius:16px}
+        *{box-sizing:border-box}
+        html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+        body{background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:42px 42px}
+        a{color:inherit;text-decoration:none}
+        .topbar{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--border);background:rgba(5,5,5,.82);backdrop-filter:blur(18px)}
+        .topbar-inner{max-width:1080px;margin:auto;padding:13px 20px;display:flex;align-items:center;justify-content:space-between}
+        .brand{display:flex;align-items:center;gap:10px}.brand-mark{width:38px;height:38px;display:grid;place-items:center;border:1px solid #333;border-radius:11px;font-size:11px;font-weight:900}.brand span{display:block;font-size:12px;font-weight:800}.brand small{display:block;margin-top:2px;color:#666;font-size:8px;letter-spacing:.12em}
+        .nav-wrap{position:relative}.menu-btn{width:40px;height:40px;border:1px solid var(--border);background:#111;color:#eee;border-radius:11px;display:grid;place-items:center}.menu-lines{width:17px;display:flex;flex-direction:column;gap:4px}.menu-lines span{height:1.5px;width:100%;background:currentColor;transition:.2s}.menu-btn.active .menu-lines span:nth-child(1){transform:translateY(5.5px) rotate(45deg)}.menu-btn.active .menu-lines span:nth-child(2){opacity:0}.menu-btn.active .menu-lines span:nth-child(3){transform:translateY(-5.5px) rotate(-45deg)}
+        .page-menu{position:absolute;right:0;top:calc(100% + 10px);width:210px;padding:7px;border:1px solid var(--hover);border-radius:15px;background:rgba(12,12,12,.98);box-shadow:0 20px 60px rgba(0,0,0,.6);opacity:0;visibility:hidden;transform:translateY(-6px) scale(.98);transition:.18s;z-index:30}.page-menu.active{opacity:1;visibility:visible;transform:none}.page-menu-label{padding:7px 9px 6px;color:#666;font-size:9px;font-weight:800;letter-spacing:.09em;text-transform:uppercase}.page-menu a{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:10px;color:#aaa;font-size:11px}.page-menu a:hover,.page-menu a.active{color:#fff;background:rgba(255,255,255,.08)}.page-icon{width:27px;height:27px;display:grid;place-items:center;border:1px solid #292929;border-radius:8px;font-size:9px;font-weight:800}
+        main{max-width:1080px;margin:auto;padding:70px 20px 90px}.eyebrow{display:inline-flex;align-items:center;gap:8px;color:#888;font-size:9px;letter-spacing:.13em;text-transform:uppercase}.dot{width:6px;height:6px;border-radius:50%;background:#aaa}.hero{max-width:700px}.hero h1{margin:18px 0 12px;font-size:clamp(38px,7vw,72px);line-height:.94;letter-spacing:-.06em}.hero p{max-width:610px;color:#777;font-size:13px;line-height:1.8;margin:0}
+        .panel{max-width:760px;margin-top:34px;padding:20px;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel);box-shadow:0 20px 80px rgba(0,0,0,.22)}.field{margin-bottom:15px}.field label{display:block;margin-bottom:7px;color:#777;font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}.field input,.field textarea{width:100%;border:1px solid var(--border);outline:0;border-radius:11px;background:#090909;color:#eee;padding:12px 13px;font:11px/1.6 inherit;transition:.18s}.field input:focus,.field textarea:focus{border-color:#555;box-shadow:0 0 0 3px rgba(255,255,255,.025)}.field textarea{min-height:180px;resize:vertical}.counter{margin-top:6px;text-align:right;color:#555;font-size:9px}.submit{width:100%;border:0;border-radius:11px;padding:13px 16px;background:#eee;color:#050505;font-size:11px;font-weight:800;cursor:pointer;transition:.18s}.submit:hover{background:#fff;transform:translateY(-1px)}.submit:disabled{opacity:.55;cursor:wait;transform:none}.hint{margin-top:11px;color:#555;font-size:9px;line-height:1.6;text-align:center}.toast{position:fixed;left:50%;bottom:22px;z-index:100;transform:translate(-50%,20px);opacity:0;pointer-events:none;padding:11px 15px;border:1px solid #333;border-radius:12px;background:#111;color:#eee;font-size:10px;transition:.2s;max-width:calc(100vw - 30px);text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}.toast.error{border-color:#542b2b;color:#f0a0a0}
+        @media(max-width:650px){.topbar-inner{padding:11px 14px}main{padding:48px 14px 70px}.panel{padding:15px}.hero h1{font-size:48px}.field textarea{min-height:160px}.page-menu{width:195px}}
+    </style>
+</head>
+<body>
+<header class="topbar">
+    <div class="topbar-inner">
+        <a href="/" class="brand"><div class="brand-mark">FX</div><div><span>FX Project</span><small>REQUEST CENTER</small></div></a>
+        <div class="nav-wrap" id="navWrap">
+            <button class="menu-btn" id="menuBtn" type="button" aria-label="Buka menu" aria-expanded="false"><span class="menu-lines"><span></span><span></span><span></span></span></button>
+            <nav class="page-menu" id="pageMenu">
+                <div class="page-menu-label">Pages</div>
+                <a href="/"><span class="page-icon">FX</span><span>Code Share</span></a>
+                <a href="/request.html" class="active"><span class="page-icon">RQ</span><span>Request Scrape</span></a>
+                <a href="/admin"><span class="page-icon">AD</span><span>Admin Console</span></a>
+            </nav>
+        </div>
+    </div>
+</header>
+<main>
+    <section class="hero">
+        <div class="eyebrow"><span class="dot"></span> FX Project Request Center</div>
+        <h1>Request<br>your scrape.</h1>
+        <p>Punya ide scraper, data extraction, atau automation yang ingin dibuat? Kirim detailnya di sini. Request akan masuk ke console admin untuk diproses.</p>
+    </section>
+    <section class="panel">
+        <form id="requestForm">
+            <div class="field"><label for="name">Nama</label><input id="name" name="name" maxlength="80" autocomplete="name" placeholder="Contoh: Kyuu" required></div>
+            <div class="field"><label for="request">Request Scrape</label><textarea id="request" name="request" maxlength="5000" placeholder="Jelaskan website/data yang ingin di-scrape, output yang diinginkan, dan detail lainnya..." required></textarea><div class="counter"><span id="counter">0</span>/5000</div></div>
+            <button class="submit" id="submitButton" type="submit">Kirim Request</button>
+            <div class="hint">Jangan masukkan password, token, API key, atau data rahasia ke dalam request.</div>
+        </form>
+    </section>
+</main>
+<div id="toast" class="toast"></div>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const form = $('requestForm');
+const nameInput = $('name');
+const requestInput = $('request');
+const submitButton = $('submitButton');
+const toast = $('toast');
+const counter = $('counter');
+const menuBtn = $('menuBtn');
+const pageMenu = $('pageMenu');
+const navWrap = $('navWrap');
+function showToast(message, error=false){toast.textContent=message;toast.classList.toggle('error',error);toast.classList.add('show');clearTimeout(showToast.timer);showToast.timer=setTimeout(()=>toast.classList.remove('show'),3200)}
+requestInput.addEventListener('input',()=>counter.textContent=requestInput.value.length);
+menuBtn.addEventListener('click',e=>{e.stopPropagation();const active=pageMenu.classList.toggle('active');menuBtn.classList.toggle('active',active);menuBtn.setAttribute('aria-expanded',String(active))});
+document.addEventListener('click',e=>{if(!navWrap.contains(e.target)){pageMenu.classList.remove('active');menuBtn.classList.remove('active');menuBtn.setAttribute('aria-expanded','false')}});
+form.addEventListener('submit',async e=>{e.preventDefault();const name=nameInput.value.trim();const request=requestInput.value.trim();if(name.length<2)return showToast('Nama terlalu pendek.',true);if(request.length<5)return showToast('Request terlalu pendek.',true);submitButton.disabled=true;submitButton.textContent='Mengirim...';try{const response=await fetch('/api?action=request',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'same-origin',body:JSON.stringify({name,request})});const data=await response.json();if(!response.ok||data.ok===false)throw new Error(data.error||'Request gagal dikirim.');form.reset();counter.textContent='0';showToast(`Request berhasil dikirim • ${data.request?.id||'tersimpan'}`)}catch(error){showToast(error.message,true)}finally{submitButton.disabled=false;submitButton.textContent='Kirim Request'}});
+</script>
+</body>
+</html>

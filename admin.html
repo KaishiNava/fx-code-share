@@ -568,6 +568,50 @@
                 padding-top: 25px;
             }
         }
+
+        /* FX Project — added console navigation */
+        .admin-menu-wrap { position: relative; flex: 0 0 auto; }
+        .admin-menu-btn { width: 40px; height: 40px; display: grid; place-items: center; padding: 0; border: 1px solid var(--border); background: #111; color: #eee; border-radius: 11px; transition: .2s; }
+        .admin-menu-btn:hover, .admin-menu-btn.active { border-color: var(--hover); background: #171717; }
+        .admin-menu-lines { width: 17px; display: flex; flex-direction: column; gap: 4px; }
+        .admin-menu-lines span { display: block; width: 100%; height: 1.5px; border-radius: 2px; background: currentColor; transition: .2s; }
+        .admin-menu-btn.active .admin-menu-lines span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
+        .admin-menu-btn.active .admin-menu-lines span:nth-child(2) { opacity: 0; }
+        .admin-menu-btn.active .admin-menu-lines span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
+        .admin-page-menu { position: absolute; top: calc(100% + 10px); right: 0; width: 215px; padding: 7px; border: 1px solid var(--hover); border-radius: 15px; background: rgba(12,12,12,.97); box-shadow: 0 20px 60px rgba(0,0,0,.6); backdrop-filter: blur(20px); opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transform-origin: top right; transition: .18s ease; z-index: 100; }
+        .admin-page-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+        .admin-page-menu-label { padding: 7px 9px 6px; color: #666; font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
+        .admin-page-menu a { display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 10px; color: #aaa; font-size: 11px; text-decoration: none; transition: .15s; }
+        .admin-page-menu a:hover, .admin-page-menu a.active-page { color: white; background: rgba(255,255,255,.08); }
+        .admin-page-menu-icon { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 8px; color: #aaa; font-size: 9px; font-weight: 800; }
+        @media(max-width:700px) { .admin-menu-btn { width: 40px; height: 40px; } .admin-page-menu { width: 200px; } }
+        /* FX Project — Request Console */
+        .request-console { padding-top: 6px; }
+        .request-console.hidden-view { display: none; }
+        .request-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin-bottom:18px; }
+        .request-head h1 { margin:0; font-size:26px; letter-spacing:-.04em; }
+        .request-head p { margin:7px 0 0; color:#777; font-size:11px; line-height:1.7; }
+        .request-tools { display:flex; gap:8px; align-items:center; margin-bottom:14px; }
+        .request-search { flex:1; min-width:0; }
+        .request-filter { width:150px; }
+        .request-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:14px; }
+        .request-stat { padding:15px; border:1px solid var(--border); border-radius:13px; background:rgba(255,255,255,.025); }
+        .request-stat small { display:block; color:#666; font-size:9px; letter-spacing:.08em; text-transform:uppercase; }
+        .request-stat strong { display:block; margin-top:7px; color:#eee; font-size:20px; }
+        .request-list { display:grid; gap:10px; }
+        .request-card { border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.025); padding:15px; }
+        .request-card-top { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+        .request-name { font-size:12px; font-weight:700; color:#eee; }
+        .request-id { margin-top:4px; color:#555; font:9px/1.5 "JetBrains Mono",monospace; }
+        .request-text { margin:12px 0; color:#bbb; font-size:11px; line-height:1.75; white-space:pre-wrap; word-break:break-word; }
+        .request-meta { display:flex; flex-wrap:wrap; gap:7px; align-items:center; color:#666; font-size:9px; }
+        .request-actions { display:flex; gap:7px; margin-top:12px; }
+        .request-actions select { flex:1; min-width:0; }
+        .request-delete { border:1px solid #3a2020; background:#130909; color:#e58b8b; border-radius:9px; padding:9px 11px; font-size:10px; }
+        .status-pill { display:inline-flex; align-items:center; border:1px solid var(--border); border-radius:999px; padding:5px 8px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+        .status-pill.pending { color:#aaa; } .status-pill.processing { color:#ddd; } .status-pill.done { color:#fff; border-color:#555; } .status-pill.rejected { color:#888; border-color:#333; }
+        .request-empty { padding:45px 20px; text-align:center; border:1px dashed var(--border); border-radius:14px; color:#666; font-size:11px; }
+        @media(max-width:700px) { .request-head { align-items:flex-start; flex-direction:column; } .request-stats { grid-template-columns:1fr 1fr; } .request-tools { flex-direction:column; align-items:stretch; } .request-filter { width:100%; } .request-card-top { flex-direction:column; } }
     </style>
 </head>
 
@@ -654,18 +698,36 @@
 
             </div>
 
-            <button
-                id="logout"
-                class="logout"
-            >
-                Logout
-            </button>
+            <div style="display:flex;align-items:center;gap:7px;position:relative;">
+                <div class="admin-menu-wrap" id="adminMenuWrap">
+                    <button class="admin-menu-btn" id="adminMenuBtn" type="button" aria-label="Buka menu console" aria-expanded="false">
+                        <span class="admin-menu-lines" aria-hidden="true"><span></span><span></span><span></span></span>
+                    </button>
+                    <nav class="admin-page-menu" id="adminPageMenu" aria-label="Console navigation">
+                        <div class="admin-page-menu-label">Console</div>
+                        <a href="/admin" class="active-page">
+                            <span class="admin-page-menu-icon">FX</span>
+                            <span>Console</span>
+                        </a>
+                        <a href="/admin?view=requests" id="requestConsoleLink">
+                            <span class="admin-page-menu-icon">RQ</span>
+                            <span>Request Console</span>
+                        </a>
+                    </nav>
+                </div>
+                <button
+                    id="logout"
+                    class="logout"
+                >
+                    Logout
+                </button>
+            </div>
 
         </div>
 
     </header>
 
-    <main class="main">
+    <main id="dashboardMain" class="main">
 
         <div class="headline">
 
@@ -790,6 +852,33 @@
         </section>
 
     </main>
+
+    <section id="requestsConsole" class="main request-console hidden-view">
+        <div class="request-head">
+            <div>
+                <h1>Request Console</h1>
+                <p>Lihat request scrape dari user dan kelola status pengerjaannya.</p>
+            </div>
+            <button id="refreshRequests" class="secondary" type="button">Refresh</button>
+        </div>
+        <div class="request-stats">
+            <div class="request-stat"><small>Total</small><strong id="requestStatTotal">0</strong></div>
+            <div class="request-stat"><small>Pending</small><strong id="requestStatPending">0</strong></div>
+            <div class="request-stat"><small>Processing</small><strong id="requestStatProcessing">0</strong></div>
+            <div class="request-stat"><small>Done</small><strong id="requestStatDone">0</strong></div>
+        </div>
+        <div class="request-tools">
+            <input id="requestSearch" class="search request-search" type="search" placeholder="Cari nama, ID, atau isi request..." autocomplete="off">
+            <select id="requestFilter" class="search request-filter">
+                <option value="all">Semua status</option>
+                <option value="pending">Pending</option>
+                <option value="processing">Processing</option>
+                <option value="done">Done</option>
+                <option value="rejected">Rejected</option>
+            </select>
+        </div>
+        <div id="requestList" class="request-list"></div>
+    </section>
 
 </section>
 
@@ -947,9 +1036,40 @@
 <script>
 'use strict';
 
+// Added console menu — existing admin logic remains unchanged.
+const adminMenuBtn = document.getElementById('adminMenuBtn');
+const adminPageMenu = document.getElementById('adminPageMenu');
+const adminMenuWrap = document.getElementById('adminMenuWrap');
+
+adminMenuBtn.addEventListener('click', event => {
+    event.stopPropagation();
+    const active = adminPageMenu.classList.toggle('active');
+    adminMenuBtn.classList.toggle('active', active);
+    adminMenuBtn.setAttribute('aria-expanded', String(active));
+});
+
+document.addEventListener('click', event => {
+    if (!adminMenuWrap.contains(event.target)) {
+        adminPageMenu.classList.remove('active');
+        adminMenuBtn.classList.remove('active');
+        adminMenuBtn.setAttribute('aria-expanded', 'false');
+    }
+});
+
+const requestConsoleLink = document.getElementById('requestConsoleLink');
+requestConsoleLink.addEventListener('click', event => {
+    event.preventDefault();
+    adminPageMenu.classList.remove('active');
+    adminMenuBtn.classList.remove('active');
+    adminMenuBtn.setAttribute('aria-expanded', 'false');
+    goAdminView('requests');
+});
+
+
 const state = {
     posts: [],
-    editing: null
+    editing: null,
+    requests: []
 };
 
 const loginScreen =
@@ -957,6 +1077,16 @@ const loginScreen =
 
 const app =
     document.getElementById('app');
+const dashboardMain =
+    document.getElementById('dashboardMain');
+const requestsConsole =
+    document.getElementById('requestsConsole');
+const requestList =
+    document.getElementById('requestList');
+const requestSearch =
+    document.getElementById('requestSearch');
+const requestFilter =
+    document.getElementById('requestFilter');
 
 const editorModal =
     document.getElementById('editorModal');
@@ -1080,6 +1210,64 @@ async function api(
     return data;
 }
 
+function formatRequestDate(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    return date.toLocaleString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+function requestStatusLabel(status) { return String(status || 'pending').toLowerCase(); }
+function renderRequestStats() {
+    const requests = state.requests;
+    document.getElementById('requestStatTotal').textContent = requests.length;
+    document.getElementById('requestStatPending').textContent = requests.filter(x => x.status === 'pending').length;
+    document.getElementById('requestStatProcessing').textContent = requests.filter(x => x.status === 'processing').length;
+    document.getElementById('requestStatDone').textContent = requests.filter(x => x.status === 'done').length;
+}
+function renderRequests() {
+    renderRequestStats();
+    const keyword = requestSearch.value.trim().toLowerCase();
+    const filter = requestFilter.value;
+    const rows = state.requests.filter(item => {
+        if (filter !== 'all' && item.status !== filter) return false;
+        if (!keyword) return true;
+        return [item.id, item.name, item.request, item.status].join(' ').toLowerCase().includes(keyword);
+    });
+    if (!rows.length) {
+        requestList.innerHTML = '<div class="request-empty">Belum ada request yang cocok.</div>';
+        return;
+    }
+    requestList.innerHTML = rows.map(item => {
+        const status = requestStatusLabel(item.status);
+        return `<article class="request-card">\n            <div class="request-card-top">\n                <div><div class="request-name">${escapeHtml(item.name)}</div><div class="request-id">${escapeHtml(item.id)}</div></div>\n                <span class="status-pill ${escapeHtml(status)}">${escapeHtml(status)}</span>\n            </div>\n            <div class="request-text">${escapeHtml(item.request)}</div>\n            <div class="request-meta"><span>Dibuat ${escapeHtml(formatRequestDate(item.createdAt))}</span><span>•</span><span>Update ${escapeHtml(formatRequestDate(item.updatedAt))}</span></div>\n            <div class="request-actions">\n                <select class="search" data-request-status="${escapeHtml(item.id)}" aria-label="Status request">\n                    <option value="pending" ${status === 'pending' ? 'selected' : ''}>Pending</option>\n                    <option value="processing" ${status === 'processing' ? 'selected' : ''}>Processing</option>\n                    <option value="done" ${status === 'done' ? 'selected' : ''}>Done</option>\n                    <option value="rejected" ${status === 'rejected' ? 'selected' : ''}>Rejected</option>\n                </select>\n                <button class="request-delete" type="button" data-request-delete="${escapeHtml(item.id)}">Delete</button>\n            </div>\n        </article>`;
+    }).join('');
+}
+async function loadRequests() {
+    try {
+        requestList.innerHTML = '<div class="request-empty">Memuat request...</div>';
+        const data = await api('requests');
+        state.requests = Array.isArray(data.requests) ? data.requests : [];
+        renderRequests();
+    } catch (error) {
+        if (error.status === 401) { showLogin(); return; }
+        requestList.innerHTML = `<div class="request-empty">Gagal memuat request.<br><small>${escapeHtml(error.message)}</small></div>`;
+    }
+}
+async function applyAdminView() {
+    const isRequests = new URLSearchParams(location.search).get('view') === 'requests';
+    dashboardMain.classList.toggle('hidden', isRequests);
+    requestsConsole.classList.toggle('hidden-view', !isRequests);
+    document.querySelectorAll('.admin-page-menu a').forEach(link => link.classList.remove('active-page'));
+    const activeLink = isRequests ? document.getElementById('requestConsoleLink') : document.querySelector('.admin-page-menu a[href="/admin"]');
+    if (activeLink) activeLink.classList.add('active-page');
+    if (isRequests) await loadRequests();
+}
+function goAdminView(view) {
+    const target = view === 'requests' ? '/admin?view=requests' : '/admin';
+    history.pushState({}, '', target);
+    applyAdminView();
+}
+
 async function checkSession() {
     try {
         const data =
@@ -1088,6 +1276,7 @@ async function checkSession() {
         if (data.authenticated) {
             showApp();
             await loadPosts();
+            await applyAdminView();
         } else {
             showLogin();
         }
@@ -1718,6 +1907,46 @@ adminSearch.addEventListener(
     'input',
     renderTable
 );
+
+requestSearch.addEventListener('input', renderRequests);
+requestFilter.addEventListener('change', renderRequests);
+document.getElementById('refreshRequests').addEventListener('click', loadRequests);
+requestList.addEventListener('change', async event => {
+    const select = event.target.closest('[data-request-status]');
+    if (!select) return;
+    const id = select.dataset.requestStatus;
+    const status = select.value;
+    select.disabled = true;
+    try {
+        await api('request-status', { method:'POST', body:JSON.stringify({id,status}) });
+        showToast('Status request diperbarui.');
+        await loadRequests();
+    } catch (error) {
+        showToast(error.message);
+        await loadRequests();
+    }
+});
+requestList.addEventListener('click', async event => {
+    const button = event.target.closest('[data-request-delete]');
+    if (!button) return;
+    const id = button.dataset.requestDelete;
+    const item = state.requests.find(row => row.id === id);
+    if (!item) return;
+    if (!confirm(`Hapus request dari "${item.name}"?\n\nRequest ini akan dihapus dari GitHub.`)) return;
+    button.disabled = true;
+    try {
+        await api('request-delete', { method:'POST', body:JSON.stringify({id}) });
+        showToast('Request berhasil dihapus.');
+        await loadRequests();
+    } catch (error) {
+        showToast(error.message);
+        button.disabled = false;
+    }
+});
+window.addEventListener('popstate', () => {
+    if (!loginScreen.classList.contains('hidden')) return;
+    applyAdminView();
+});
 
 checkSession();
 </script>

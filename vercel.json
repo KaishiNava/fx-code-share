@@ -12,6 +12,14 @@
     {
       "source": "/admin",
       "destination": "/admin.html"
+    },
+    {
+      "source": "/request",
+      "destination": "/request.html"
+    },
+    {
+      "source": "/admin/requests",
+      "destination": "/admin.html"
     }
   ],
   "headers": [
@@ -22,6 +30,15 @@
           "key": "X-Robots-Tag",
           "value": "noindex, nofollow, noarchive"
         },
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/request.html",
+      "headers": [
         {
           "key": "Cache-Control",
           "value": "no-store"
