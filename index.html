@@ -69,6 +69,10 @@
             min-height: 100vh;
         }
 
+        body.popup-open {
+            overflow: hidden;
+        }
+
         button,
         input,
         textarea,
@@ -90,16 +94,21 @@
             color: black;
         }
 
+        /* =========================================
+           TOPBAR
+        ========================================= */
+
         .topbar {
             position: sticky;
             top: 0;
-            z-index: 50;
+            z-index: 100;
             height: 70px;
             display: flex;
             align-items: center;
             border-bottom: 1px solid var(--border);
             background: rgba(5,5,5,.78);
             backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
         }
 
         .topbar-inner {
@@ -159,6 +168,212 @@
             background: rgba(255,255,255,.07);
         }
 
+        /* =========================================
+           PAGE MENU
+        ========================================= */
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .menu-wrap {
+            position: relative;
+            flex: 0 0 auto;
+            z-index: 110;
+        }
+
+        .menu-btn {
+            position: relative;
+            z-index: 111;
+
+            width: 42px;
+            height: 42px;
+
+            display: grid;
+            place-items: center;
+
+            padding: 0;
+
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,.035);
+            color: #eee;
+
+            border-radius: 12px;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+
+            -webkit-tap-highlight-color: transparent;
+            appearance: none;
+            -webkit-appearance: none;
+            touch-action: manipulation;
+        }
+
+        .menu-btn:hover,
+        .menu-btn.active {
+            border-color: var(--border-hover);
+            background: rgba(255,255,255,.08);
+        }
+
+        .menu-btn:active {
+            transform: scale(.94);
+        }
+
+        .menu-lines {
+            width: 18px;
+            height: 14px;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            pointer-events: none;
+        }
+
+        .menu-lines span {
+            display: block;
+
+            width: 100%;
+            height: 2px;
+
+            border-radius: 3px;
+            background: currentColor;
+
+            transition:
+                transform .2s ease,
+                opacity .2s ease;
+        }
+
+        .menu-btn.active .menu-lines span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        .menu-btn.active .menu-lines span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .menu-btn.active .menu-lines span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
+        .page-menu {
+            position: absolute;
+
+            top: calc(100% + 10px);
+            right: 0;
+
+            width: 215px;
+
+            padding: 7px;
+
+            border: 1px solid var(--border-hover);
+            border-radius: 15px;
+
+            background: rgba(12,12,12,.98);
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,.55),
+                0 0 0 1px rgba(255,255,255,.015);
+
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            transform:
+                translateY(-8px)
+                scale(.97);
+
+            transform-origin: top right;
+
+            transition:
+                opacity .18s ease,
+                visibility .18s ease,
+                transform .18s ease;
+        }
+
+        .page-menu.active {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+
+            transform:
+                translateY(0)
+                scale(1);
+        }
+
+        .page-menu-label {
+            padding: 7px 9px 6px;
+
+            color: #666;
+
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: .09em;
+            text-transform: uppercase;
+        }
+
+        .page-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            padding: 11px 10px;
+
+            border-radius: 10px;
+
+            color: #bbb;
+
+            font-size: 11px;
+            font-weight: 600;
+
+            transition:
+                background .15s ease,
+                color .15s ease;
+        }
+
+        .page-menu a:hover {
+            color: white;
+            background: rgba(255,255,255,.07);
+        }
+
+        .page-menu a:active {
+            background: rgba(255,255,255,.11);
+        }
+
+        .page-menu a.active-page {
+            color: white;
+            background: rgba(255,255,255,.09);
+        }
+
+        .page-menu-icon {
+            width: 27px;
+            height: 27px;
+
+            display: grid;
+            place-items: center;
+
+            flex: 0 0 27px;
+
+            border: 1px solid var(--border);
+            border-radius: 8px;
+
+            color: #aaa;
+
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        /* =========================================
+           HERO
+        ========================================= */
+
         .hero {
             width: min(1180px, calc(100% - 32px));
             margin: auto;
@@ -169,11 +384,15 @@
             display: inline-flex;
             align-items: center;
             gap: 8px;
+
             padding: 7px 11px;
+
             border: 1px solid var(--border);
             border-radius: 999px;
+
             color: #cfcfcf;
             background: rgba(255,255,255,.025);
+
             font-size: 11px;
             font-weight: 600;
             letter-spacing: .06em;
@@ -183,14 +402,20 @@
         .dot {
             width: 6px;
             height: 6px;
+
             border-radius: 50%;
+
             background: var(--green);
-            box-shadow: 0 0 12px rgba(69,212,131,.5);
+
+            box-shadow:
+                0 0 12px rgba(69,212,131,.5);
         }
 
         h1 {
             margin: 22px 0 14px;
+
             max-width: 780px;
+
             font-size: clamp(42px, 8vw, 82px);
             line-height: .94;
             letter-spacing: -.075em;
@@ -198,29 +423,47 @@
 
         .hero p {
             max-width: 650px;
+
             margin: 0;
+
             color: var(--muted);
+
             line-height: 1.7;
             font-size: 15px;
         }
 
+        /* =========================================
+           TOOLBAR
+        ========================================= */
+
         .toolbar {
             width: min(1180px, calc(100% - 32px));
+
             margin: 10px auto 30px;
+
             display: grid;
-            grid-template-columns: 1fr 180px;
+
+            grid-template-columns:
+                1fr 180px;
+
             gap: 10px;
         }
 
         .search,
         .filter {
             height: 50px;
+
             border: 1px solid var(--border);
             outline: none;
+
             background: rgba(255,255,255,.035);
+
             color: var(--text);
+
             border-radius: 14px;
+
             padding: 0 15px;
+
             transition: .2s;
         }
 
@@ -234,9 +477,15 @@
             background: #111;
         }
 
+        /* =========================================
+           CONTENT
+        ========================================= */
+
         .content {
             width: min(1180px, calc(100% - 32px));
+
             margin: auto;
+
             padding-bottom: 70px;
         }
 
@@ -244,6 +493,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             margin-bottom: 15px;
         }
 
@@ -260,23 +510,32 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
+
+            grid-template-columns:
+                repeat(3, minmax(0, 1fr));
+
             gap: 13px;
         }
 
         .card {
             position: relative;
+
             overflow: hidden;
+
             min-height: 205px;
+
             padding: 19px;
+
             border: 1px solid var(--border);
             border-radius: var(--radius);
+
             background:
                 linear-gradient(
                     145deg,
                     rgba(255,255,255,.045),
                     rgba(255,255,255,.015)
                 );
+
             transition:
                 transform .2s,
                 border-color .2s,
@@ -285,7 +544,9 @@
 
         .card:hover {
             transform: translateY(-3px);
+
             border-color: var(--border-hover);
+
             background:
                 linear-gradient(
                     145deg,
@@ -298,17 +559,25 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             gap: 10px;
+
             margin-bottom: 22px;
         }
 
         .lang {
             padding: 6px 9px;
+
             border-radius: 8px;
+
             background: #171717;
+
             border: 1px solid var(--border);
+
             font-family: "JetBrains Mono", monospace;
+
             font-size: 10px;
+
             color: #ddd;
         }
 
@@ -319,70 +588,113 @@
 
         .card h2 {
             margin: 0 0 9px;
+
             font-size: 18px;
+
             letter-spacing: -.035em;
+
             line-height: 1.2;
         }
 
         .card p {
             margin: 0;
+
             min-height: 42px;
+
             color: var(--muted);
+
             font-size: 12px;
+
             line-height: 1.6;
         }
 
         .card-bottom {
             position: absolute;
+
             bottom: 17px;
             left: 19px;
             right: 19px;
+
             display: flex;
+
             align-items: center;
             justify-content: space-between;
+
             gap: 10px;
         }
 
         .filename {
             min-width: 0;
+
             overflow: hidden;
+
             text-overflow: ellipsis;
+
             white-space: nowrap;
-            font-family: "JetBrains Mono", monospace;
+
+            font-family:
+                "JetBrains Mono",
+                monospace;
+
             color: #777;
+
             font-size: 10px;
         }
 
         .open-btn {
             flex: 0 0 auto;
+
             border: 1px solid var(--border);
+
             background: white;
+
             color: black;
+
             border-radius: 10px;
+
             padding: 8px 11px;
+
             font-size: 11px;
+
             font-weight: 700;
         }
 
         .empty,
         .loading {
             grid-column: 1 / -1;
+
             min-height: 240px;
+
             display: grid;
+
             place-items: center;
+
             text-align: center;
+
             border: 1px dashed var(--border);
+
             border-radius: var(--radius);
+
             color: var(--muted);
         }
 
+        /* =========================================
+           CODE VIEWER
+        ========================================= */
+
         .modal {
             position: fixed;
+
             inset: 0;
-            z-index: 100;
+
+            z-index: 400;
+
             display: none;
+
             background: rgba(0,0,0,.76);
+
             backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
         }
 
         .modal.active {
@@ -391,24 +703,40 @@
 
         .viewer {
             width: min(1200px, calc(100% - 20px));
+
             height: min(88vh, 850px);
+
             margin: auto;
+
             display: flex;
+
             flex-direction: column;
+
             overflow: hidden;
+
             border: 1px solid var(--border-hover);
+
             border-radius: 20px;
+
             background: #090909;
-            box-shadow: 0 30px 100px rgba(0,0,0,.7);
+
+            box-shadow:
+                0 30px 100px rgba(0,0,0,.7);
         }
 
         .viewer-head {
             min-height: 66px;
+
             padding: 11px 13px;
+
             display: flex;
+
             align-items: center;
+
             justify-content: space-between;
+
             gap: 15px;
+
             border-bottom: 1px solid var(--border);
         }
 
@@ -418,17 +746,26 @@
 
         .viewer-title {
             margin: 0;
+
             font-size: 15px;
+
             white-space: nowrap;
+
             overflow: hidden;
+
             text-overflow: ellipsis;
         }
 
         .viewer-meta {
             margin-top: 4px;
+
             color: #666;
+
             font-size: 10px;
-            font-family: "JetBrains Mono", monospace;
+
+            font-family:
+                "JetBrains Mono",
+                monospace;
         }
 
         .viewer-actions {
@@ -438,11 +775,17 @@
 
         .action {
             height: 35px;
+
             padding: 0 11px;
+
             border: 1px solid var(--border);
+
             background: #111;
+
             color: #ddd;
+
             border-radius: 9px;
+
             font-size: 11px;
         }
 
@@ -453,54 +796,370 @@
 
         .code-wrap {
             position: relative;
+
             flex: 1;
+
             min-height: 0;
+
             overflow: auto;
+
             background: #060606;
         }
 
         pre {
             margin: 0;
+
             padding: 22px;
+
             min-width: max-content;
+
             color: #d7d7d7;
-            font-family: "JetBrains Mono", monospace;
+
+            font-family:
+                "JetBrains Mono",
+                monospace;
+
             font-size: 12px;
+
             line-height: 1.75;
+
             tab-size: 4;
+
             white-space: pre;
         }
 
+        /* =========================================
+           TOAST
+        ========================================= */
+
         .toast {
             position: fixed;
+
             left: 50%;
             bottom: 22px;
-            z-index: 200;
-            transform: translate(-50%, 20px);
+
+            z-index: 1000;
+
+            transform:
+                translate(-50%, 20px);
+
             opacity: 0;
+
             pointer-events: none;
+
             padding: 11px 15px;
+
             border: 1px solid var(--border-hover);
+
             border-radius: 12px;
+
             background: #111;
+
             color: #eee;
-            box-shadow: 0 15px 40px rgba(0,0,0,.5);
+
+            box-shadow:
+                0 15px 40px rgba(0,0,0,.5);
+
             font-size: 12px;
+
             transition: .25s;
         }
 
         .toast.show {
-            transform: translate(-50%, 0);
+            transform:
+                translate(-50%, 0);
+
             opacity: 1;
         }
 
+        /* =========================================
+           WHATSAPP CHANNEL POPUP
+        ========================================= */
+
+        .channel-overlay {
+            position: fixed;
+
+            inset: 0;
+
+            z-index: 900;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            background:
+                rgba(0,0,0,.72);
+
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+
+            opacity: 0;
+
+            visibility: hidden;
+
+            pointer-events: none;
+
+            transition:
+                opacity .25s ease,
+                visibility .25s ease;
+        }
+
+        .channel-overlay.active {
+            opacity: 1;
+
+            visibility: visible;
+
+            pointer-events: auto;
+        }
+
+        .channel-popup {
+            position: relative;
+
+            width: min(430px, 100%);
+
+            padding: 28px;
+
+            border: 1px solid rgba(255,255,255,.13);
+
+            border-radius: 24px;
+
+            background:
+                radial-gradient(
+                    circle at 50% 0%,
+                    rgba(255,255,255,.08),
+                    transparent 45%
+                ),
+                #0b0b0b;
+
+            box-shadow:
+                0 30px 100px rgba(0,0,0,.75),
+                0 0 0 1px rgba(255,255,255,.015);
+
+            transform:
+                translateY(18px)
+                scale(.96);
+
+            transition:
+                transform .25s ease;
+        }
+
+        .channel-overlay.active
+        .channel-popup {
+            transform:
+                translateY(0)
+                scale(1);
+        }
+
+        .channel-close {
+            position: absolute;
+
+            top: 13px;
+            right: 13px;
+
+            width: 34px;
+            height: 34px;
+
+            display: grid;
+
+            place-items: center;
+
+            padding: 0;
+
+            border: 1px solid var(--border);
+
+            border-radius: 10px;
+
+            background:
+                rgba(255,255,255,.035);
+
+            color: #aaa;
+
+            font-size: 18px;
+
+            line-height: 1;
+
+            transition: .2s;
+        }
+
+        .channel-close:hover {
+            color: white;
+
+            background:
+                rgba(255,255,255,.08);
+
+            border-color:
+                var(--border-hover);
+        }
+
+        .channel-icon {
+            width: 58px;
+            height: 58px;
+
+            margin-bottom: 20px;
+
+            display: grid;
+
+            place-items: center;
+
+            border-radius: 18px;
+
+            border: 1px solid
+                rgba(255,255,255,.12);
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.11),
+                    rgba(255,255,255,.035)
+                );
+
+            color: white;
+
+            font-size: 24px;
+
+            font-weight: 800;
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,.25);
+        }
+
+        .channel-popup h2 {
+            margin: 0 0 9px;
+
+            font-size: 24px;
+
+            line-height: 1.15;
+
+            letter-spacing: -.045em;
+        }
+
+        .channel-popup p {
+            margin: 0;
+
+            color: var(--muted);
+
+            font-size: 13px;
+
+            line-height: 1.7;
+        }
+
+        .channel-note {
+            margin-top: 17px !important;
+
+            padding: 11px 12px;
+
+            border: 1px solid var(--border);
+
+            border-radius: 12px;
+
+            background:
+                rgba(255,255,255,.025);
+
+            color: #aaa !important;
+
+            font-size: 11px !important;
+        }
+
+        .channel-actions {
+            display: grid;
+
+            grid-template-columns:
+                1fr 1fr;
+
+            gap: 8px;
+
+            margin-top: 20px;
+        }
+
+        /*
+         * PENTING:
+         * Anchor Join Channel harus flex.
+         * Sebelumnya hanya punya style umum .channel-btn,
+         * sehingga teks anchor bisa berada di pojok atas.
+         */
+
+        .channel-btn {
+            width: 100%;
+
+            min-height: 45px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            box-sizing: border-box;
+
+            border-radius: 12px;
+
+            border: 1px solid var(--border);
+
+            background:
+                rgba(255,255,255,.035);
+
+            color: #ddd;
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            line-height: 1;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease,
+                opacity .2s ease;
+        }
+
+        .channel-btn:hover {
+            background:
+                rgba(255,255,255,.08);
+
+            border-color:
+                var(--border-hover);
+        }
+
+        .channel-btn:active {
+            transform: scale(.98);
+        }
+
+        .channel-btn.join {
+            background: white;
+
+            color: black;
+
+            border-color: white;
+        }
+
+        .channel-btn.join:hover {
+            background: #e8e8e8;
+
+            border-color: #e8e8e8;
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
         @media (max-width: 900px) {
+
             .grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
             }
         }
 
         @media (max-width: 650px) {
+
             .topbar {
                 height: 62px;
             }
@@ -509,11 +1168,37 @@
             .hero,
             .toolbar,
             .content {
-                width: min(100% - 22px, 1180px);
+                width:
+                    min(
+                        calc(100% - 22px),
+                        1180px
+                    );
+            }
+
+            .header-actions {
+                gap: 5px;
+            }
+
+            .admin-link {
+                padding: 8px 10px;
+
+                font-size: 11px;
+            }
+
+            .menu-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .page-menu {
+                right: 0;
+
+                width: 195px;
             }
 
             .hero {
-                padding: 55px 0 28px;
+                padding:
+                    55px 0 28px;
             }
 
             h1 {
@@ -521,16 +1206,21 @@
             }
 
             .toolbar {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    1fr;
             }
 
             .grid {
-                grid-template-columns: 1fr;
+                grid-template-columns:
+                    1fr;
             }
 
             .viewer {
-                width: calc(100% - 10px);
+                width:
+                    calc(100% - 10px);
+
                 height: 94vh;
+
                 border-radius: 15px;
             }
 
@@ -540,69 +1230,169 @@
 
             pre {
                 padding: 15px;
+
                 font-size: 11px;
+            }
+
+            .channel-overlay {
+                padding: 13px;
+            }
+
+            .channel-popup {
+                padding:
+                    24px 20px 20px;
+
+                border-radius: 21px;
+            }
+
+            .channel-popup h2 {
+                font-size: 22px;
+            }
+
+            .channel-actions {
+                grid-template-columns:
+                    1fr;
+            }
+
+            .channel-btn {
+                min-height: 52px;
             }
         }
 
-        /* FX Project — added page navigation */
-        .menu-wrap { position: relative; flex: 0 0 auto; }
-        .menu-btn { width: 42px; height: 42px; display: grid; place-items: center; gap: 4px; padding: 0; border: 1px solid var(--border); background: rgba(255,255,255,.035); color: #eee; border-radius: 12px; transition: .2s; }
-        .menu-btn:hover, .menu-btn.active { border-color: var(--border-hover); background: rgba(255,255,255,.08); }
-        .menu-lines { width: 17px; display: flex; flex-direction: column; gap: 4px; }
-        .menu-lines span { display: block; width: 100%; height: 1.5px; border-radius: 2px; background: currentColor; transition: .2s; }
-        .menu-btn.active .menu-lines span:nth-child(1) { transform: translateY(5.5px) rotate(45deg); }
-        .menu-btn.active .menu-lines span:nth-child(2) { opacity: 0; }
-        .menu-btn.active .menu-lines span:nth-child(3) { transform: translateY(-5.5px) rotate(-45deg); }
-        .page-menu { position: absolute; top: calc(100% + 10px); right: 0; width: 210px; padding: 7px; border: 1px solid var(--border-hover); border-radius: 15px; background: rgba(12,12,12,.96); box-shadow: 0 20px 60px rgba(0,0,0,.55); backdrop-filter: blur(20px); opacity: 0; visibility: hidden; transform: translateY(-6px) scale(.98); transform-origin: top right; transition: .18s ease; z-index: 100; }
-        .page-menu.active { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
-        .page-menu-label { padding: 7px 9px 6px; color: #666; font-size: 9px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; }
-        .page-menu a { display: flex; align-items: center; gap: 10px; padding: 11px 10px; border-radius: 10px; color: #bbb; font-size: 11px; transition: .15s; }
-        .page-menu a:hover { color: white; background: rgba(255,255,255,.07); }
-        .page-menu a.active-page { color: white; background: rgba(255,255,255,.09); }
-        .page-menu-icon { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 8px; color: #aaa; font-size: 9px; font-weight: 800; }
-        @media (max-width: 650px) { .menu-btn { width: 40px; height: 40px; } .page-menu { right: 0; width: 195px; } }
+        @media (max-width: 380px) {
+
+            .admin-link {
+                display: none;
+            }
+
+            .channel-popup {
+                padding:
+                    22px 17px 17px;
+            }
+        }
     </style>
 </head>
 
 <body>
 
 <header class="topbar">
+
     <div class="topbar-inner">
 
-        <a href="/" class="brand">
-            <div class="brand-mark">FX</div>
+        <a
+            href="/"
+            class="brand"
+        >
+
+            <div class="brand-mark">
+                FX
+            </div>
 
             <div>
-                <span>FX Project</span>
-                <small>CODE SHARE</small>
+
+                <span>
+                    FX Project
+                </span>
+
+                <small>
+                    CODE SHARE
+                </small>
+
             </div>
+
         </a>
 
-        <div style="display:flex;align-items:center;gap:7px;">
-            <a href="/admin" class="admin-link">Admin</a>
-            <div class="menu-wrap" id="pageMenuWrap">
-            <button class="menu-btn" id="pageMenuBtn" type="button" aria-label="Buka menu halaman" aria-expanded="false">
-                <span class="menu-lines" aria-hidden="true"><span></span><span></span><span></span></span>
-            </button>
-            <nav class="page-menu" id="pageMenu" aria-label="Navigasi halaman">
-                <div class="page-menu-label">Pages</div>
-                <a href="/" class="active-page">
-                    <span class="page-menu-icon">FX</span>
-                    <span>Code Share</span>
-                </a>
-                <a href="/request.html">
-                    <span class="page-menu-icon">RQ</span>
-                    <span>Request Scrape</span>
-                </a>
-                <a href="/admin">
-                    <span class="page-menu-icon">AD</span>
-                    <span>Admin Console</span>
-                </a>
-            </nav>
+        <div class="header-actions">
+
+            <a
+                href="/admin"
+                class="admin-link"
+            >
+                Admin
+            </a>
+
+            <div
+                class="menu-wrap"
+                id="pageMenuWrap"
+            >
+
+                <button
+                    class="menu-btn"
+                    id="pageMenuBtn"
+                    type="button"
+                    aria-label="Buka menu halaman"
+                    aria-expanded="false"
+                    aria-controls="pageMenu"
+                >
+
+                    <span
+                        class="menu-lines"
+                        aria-hidden="true"
+                    >
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
+
+                </button>
+
+                <nav
+                    class="page-menu"
+                    id="pageMenu"
+                    aria-label="Navigasi halaman"
+                >
+
+                    <div class="page-menu-label">
+                        Pages
+                    </div>
+
+                    <a
+                        href="/"
+                        class="active-page"
+                    >
+
+                        <span class="page-menu-icon">
+                            FX
+                        </span>
+
+                        <span>
+                            Code Share
+                        </span>
+
+                    </a>
+
+                    <a href="/request">
+
+                        <span class="page-menu-icon">
+                            RQ
+                        </span>
+
+                        <span>
+                            Request Scrape
+                        </span>
+
+                    </a>
+
+                    <a href="/admin">
+
+                        <span class="page-menu-icon">
+                            AD
+                        </span>
+
+                        <span>
+                            Admin Console
+                        </span>
+
+                    </a>
+
+                </nav>
+
             </div>
+
         </div>
 
     </div>
+
 </header>
 
 <main>
@@ -610,8 +1400,11 @@
     <section class="hero">
 
         <div class="eyebrow">
+
             <span class="dot"></span>
+
             Public Code Library
+
         </div>
 
         <h1>
@@ -621,10 +1414,10 @@
         </h1>
 
         <p>
-            Koleksi source code, plugin, tools, bot,
-            scraper, utilities, dan project dari
-            FX Project. Buka source langsung dan
-            copy dalam satu klik.
+            Koleksi source code, plugin, tools,
+            bot, scraper, utilities, dan project
+            dari FX Project. Buka source langsung
+            dan copy dalam satu klik.
         </p>
 
     </section>
@@ -643,9 +1436,11 @@
             id="filter"
             class="filter"
         >
+
             <option value="all">
                 Semua bahasa
             </option>
+
         </select>
 
     </section>
@@ -653,6 +1448,7 @@
     <section class="content">
 
         <div class="section-head">
+
             <div class="section-title">
                 SHARED CODE
             </div>
@@ -663,20 +1459,27 @@
             >
                 Loading...
             </div>
+
         </div>
 
         <div
             id="grid"
             class="grid"
         >
+
             <div class="loading">
                 Memuat source code...
             </div>
+
         </div>
 
     </section>
 
 </main>
+
+<!-- =========================================
+     CODE VIEWER
+========================================= -->
 
 <div
     id="modal"
@@ -710,6 +1513,7 @@
                 <button
                     id="copyBtn"
                     class="action primary"
+                    type="button"
                 >
                     Copy
                 </button>
@@ -717,6 +1521,7 @@
                 <button
                     id="downloadBtn"
                     class="action optional"
+                    type="button"
                 >
                     Download
                 </button>
@@ -724,6 +1529,7 @@
                 <button
                     id="rawBtn"
                     class="action optional"
+                    type="button"
                 >
                     RAW
                 </button>
@@ -731,6 +1537,7 @@
                 <button
                     id="closeBtn"
                     class="action"
+                    type="button"
                 >
                     Close
                 </button>
@@ -740,7 +1547,81 @@
         </div>
 
         <div class="code-wrap">
+
             <pre id="code"></pre>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- =========================================
+     WHATSAPP CHANNEL POPUP
+========================================= -->
+
+<div
+    id="channelOverlay"
+    class="channel-overlay"
+    aria-hidden="true"
+>
+
+    <div
+        class="channel-popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="channelTitle"
+    >
+
+        <button
+            id="channelClose"
+            class="channel-close"
+            type="button"
+            aria-label="Tutup popup"
+        >
+            ×
+        </button>
+
+        <div class="channel-icon">
+            FX
+        </div>
+
+        <h2 id="channelTitle">
+            Join Channel FX Project
+        </h2>
+
+        <p>
+            Ikuti channel resmi FX Project untuk
+            mendapatkan info update terbaru,
+            source baru, plugin, tools, dan
+            informasi project lainnya.
+        </p>
+
+        <p class="channel-note">
+            Jangan sampai ketinggalan update
+            terbaru dari FX Project.
+        </p>
+
+        <div class="channel-actions">
+
+            <button
+                id="channelLater"
+                class="channel-btn"
+                type="button"
+            >
+                Nanti Saja
+            </button>
+
+            <a
+                id="channelJoin"
+                class="channel-btn join"
+                href="https://whatsapp.com/channel/0029Vb8qumnJZg403yEDPn1A"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Join Channel
+            </a>
+
         </div>
 
     </div>
@@ -755,10 +1636,18 @@
 <script>
 'use strict';
 
+/* =========================================
+   STATE
+========================================= */
+
 const state = {
     posts: [],
     current: null
 };
+
+/* =========================================
+   ELEMENTS
+========================================= */
 
 const grid =
     document.getElementById('grid');
@@ -787,47 +1676,477 @@ const code =
 const toast =
     document.getElementById('toast');
 
-function escapeHtml(value) {
-    return String(value)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
+/* =========================================
+   PAGE MENU
+========================================= */
+
+const pageMenuBtn =
+    document.getElementById('pageMenuBtn');
+
+const pageMenu =
+    document.getElementById('pageMenu');
+
+const pageMenuWrap =
+    document.getElementById('pageMenuWrap');
+
+function openPageMenu() {
+
+    if (
+        !pageMenuBtn ||
+        !pageMenu
+    ) {
+        return;
+    }
+
+    pageMenu.classList.add(
+        'active'
+    );
+
+    pageMenuBtn.classList.add(
+        'active'
+    );
+
+    pageMenuBtn.setAttribute(
+        'aria-expanded',
+        'true'
+    );
 }
 
+function closePageMenu() {
+
+    if (
+        !pageMenuBtn ||
+        !pageMenu
+    ) {
+        return;
+    }
+
+    pageMenu.classList.remove(
+        'active'
+    );
+
+    pageMenuBtn.classList.remove(
+        'active'
+    );
+
+    pageMenuBtn.setAttribute(
+        'aria-expanded',
+        'false'
+    );
+}
+
+function togglePageMenu() {
+
+    if (
+        !pageMenuBtn ||
+        !pageMenu
+    ) {
+        return;
+    }
+
+    const opened =
+        pageMenu.classList.contains(
+            'active'
+        );
+
+    if (opened) {
+
+        closePageMenu();
+
+    } else {
+
+        openPageMenu();
+
+    }
+}
+
+/*
+ * Tombol menu.
+ * Menggunakan pointerup juga supaya
+ * lebih konsisten di Android/mobile browser.
+ */
+
+if (pageMenuBtn) {
+
+    pageMenuBtn.addEventListener(
+        'click',
+        event => {
+
+            event.preventDefault();
+
+            event.stopPropagation();
+
+            togglePageMenu();
+
+        }
+    );
+
+    pageMenuBtn.addEventListener(
+        'pointerup',
+        event => {
+
+            if (
+                event.pointerType ===
+                'touch'
+            ) {
+
+                event.preventDefault();
+
+            }
+
+        }
+    );
+}
+
+if (pageMenu) {
+
+    pageMenu.addEventListener(
+        'click',
+        event => {
+
+            event.stopPropagation();
+
+        }
+    );
+
+}
+
+document.addEventListener(
+    'click',
+    event => {
+
+        if (
+            pageMenuWrap &&
+            !pageMenuWrap.contains(
+                event.target
+            )
+        ) {
+
+            closePageMenu();
+
+        }
+
+    }
+);
+
+document.addEventListener(
+    'keydown',
+    event => {
+
+        if (
+            event.key ===
+            'Escape'
+        ) {
+
+            closePageMenu();
+
+        }
+
+    }
+);
+
+/* =========================================
+   WHATSAPP CHANNEL POPUP
+========================================= */
+
+const channelOverlay =
+    document.getElementById(
+        'channelOverlay'
+    );
+
+const channelClose =
+    document.getElementById(
+        'channelClose'
+    );
+
+const channelLater =
+    document.getElementById(
+        'channelLater'
+    );
+
+const channelJoin =
+    document.getElementById(
+        'channelJoin'
+    );
+
+const CHANNEL_POPUP_KEY =
+    'fx_project_channel_popup_closed';
+
+/*
+ * Popup muncul ketika website dibuka.
+ *
+ * sessionStorage:
+ * - Popup muncul ketika user membuka website.
+ * - Setelah ditutup, tidak muncul lagi
+ *   selama sesi tab tersebut.
+ * - Membuka sesi/tab baru dapat menampilkan
+ *   popup kembali.
+ */
+
+function showChannelPopup() {
+
+    if (!channelOverlay) {
+        return;
+    }
+
+    let closed = false;
+
+    try {
+
+        closed =
+            sessionStorage.getItem(
+                CHANNEL_POPUP_KEY
+            ) === '1';
+
+    } catch {
+        closed = false;
+    }
+
+    if (closed) {
+        return;
+    }
+
+    channelOverlay.classList.add(
+        'active'
+    );
+
+    channelOverlay.setAttribute(
+        'aria-hidden',
+        'false'
+    );
+
+    document.body.classList.add(
+        'popup-open'
+    );
+
+    if (channelClose) {
+
+        setTimeout(
+            () => {
+
+                channelClose.focus();
+
+            },
+            100
+        );
+
+    }
+}
+
+function closeChannelPopup() {
+
+    if (!channelOverlay) {
+        return;
+    }
+
+    channelOverlay.classList.remove(
+        'active'
+    );
+
+    channelOverlay.setAttribute(
+        'aria-hidden',
+        'true'
+    );
+
+    document.body.classList.remove(
+        'popup-open'
+    );
+
+    try {
+
+        sessionStorage.setItem(
+            CHANNEL_POPUP_KEY,
+            '1'
+        );
+
+    } catch {
+        /* Storage tidak tersedia. */
+    }
+}
+
+if (channelClose) {
+
+    channelClose.addEventListener(
+        'click',
+        event => {
+
+            event.preventDefault();
+
+            closeChannelPopup();
+
+        }
+    );
+
+}
+
+if (channelLater) {
+
+    channelLater.addEventListener(
+        'click',
+        event => {
+
+            event.preventDefault();
+
+            closeChannelPopup();
+
+        }
+    );
+
+}
+
+if (channelOverlay) {
+
+    channelOverlay.addEventListener(
+        'click',
+        event => {
+
+            if (
+                event.target ===
+                channelOverlay
+            ) {
+
+                closeChannelPopup();
+
+            }
+
+        }
+    );
+
+}
+
+if (channelJoin) {
+
+    channelJoin.addEventListener(
+        'click',
+        () => {
+
+            try {
+
+                sessionStorage.setItem(
+                    CHANNEL_POPUP_KEY,
+                    '1'
+                );
+
+            } catch {
+                /* Storage tidak tersedia. */
+            }
+
+        }
+    );
+
+}
+
+/* =========================================
+   ESCAPE HTML
+========================================= */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            '&amp;'
+        )
+        .replace(
+            /</g,
+            '&lt;'
+        )
+        .replace(
+            />/g,
+            '&gt;'
+        )
+        .replace(
+            /"/g,
+            '&quot;'
+        )
+        .replace(
+            /'/g,
+            '&#039;'
+        );
+}
+
+/* =========================================
+   FORMAT SIZE
+========================================= */
+
 function formatSize(bytes) {
-    if (!bytes) return '0 B';
+
+    if (!bytes) {
+        return '0 B';
+    }
 
     if (bytes < 1024) {
+
         return `${bytes} B`;
+
     }
 
     if (bytes < 1024 * 1024) {
-        return `${(bytes / 1024).toFixed(1)} KB`;
+
+        return `${(
+            bytes / 1024
+        ).toFixed(1)} KB`;
+
     }
 
-    return `${(bytes / 1024 / 1024).toFixed(2)} MB`;
+    return `${(
+        bytes /
+        1024 /
+        1024
+    ).toFixed(2)} MB`;
 }
 
+/* =========================================
+   TOAST
+========================================= */
+
 function showToast(message) {
-    toast.textContent = message;
-    toast.classList.add('show');
+
+    if (!toast) {
+        return;
+    }
+
+    toast.textContent =
+        message;
+
+    toast.classList.add(
+        'show'
+    );
 
     clearTimeout(
         showToast.timer
     );
 
-    showToast.timer = setTimeout(() => {
-        toast.classList.remove('show');
-    }, 2300);
+    showToast.timer =
+        setTimeout(
+            () => {
+
+                toast.classList.remove(
+                    'show'
+                );
+
+            },
+            2300
+        );
 }
 
+/* =========================================
+   RENDER FILTERS
+========================================= */
+
 function renderFilters() {
+
+    if (!filter) {
+        return;
+    }
+
     const languages = [
         ...new Set(
             state.posts
-                .map(post => post.language)
+                .map(
+                    post =>
+                        post.language
+                )
                 .filter(Boolean)
         )
     ].sort();
@@ -837,15 +2156,37 @@ function renderFilters() {
             Semua bahasa
         </option>
 
-        ${languages.map(language => `
-            <option value="${escapeHtml(language)}">
-                ${escapeHtml(language)}
-            </option>
-        `).join('')}
+        ${languages.map(
+            language => `
+                <option
+                    value="${escapeHtml(
+                        language
+                    )}"
+                >
+                    ${escapeHtml(
+                        language
+                    )}
+                </option>
+            `
+        ).join('')}
     `;
 }
 
+/* =========================================
+   RENDER POSTS
+========================================= */
+
 function render() {
+
+    if (
+        !grid ||
+        !search ||
+        !filter ||
+        !count
+    ) {
+        return;
+    }
+
     const keyword =
         search.value
             .trim()
@@ -855,33 +2196,41 @@ function render() {
         filter.value;
 
     const filtered =
-        state.posts.filter(post => {
+        state.posts.filter(
+            post => {
 
-            const searchable = [
-                post.title,
-                post.description,
-                post.filename,
-                post.language
-            ]
-                .join(' ')
-                .toLowerCase();
+                const searchable = [
+                    post.title,
+                    post.description,
+                    post.filename,
+                    post.language
+                ]
+                    .join(' ')
+                    .toLowerCase();
 
-            const matchSearch =
-                !keyword ||
-                searchable.includes(keyword);
+                const matchSearch =
+                    !keyword ||
+                    searchable.includes(
+                        keyword
+                    );
 
-            const matchFilter =
-                selected === 'all' ||
-                post.language === selected;
+                const matchFilter =
+                    selected === 'all' ||
+                    post.language ===
+                        selected;
 
-            return matchSearch &&
-                matchFilter;
-        });
+                return (
+                    matchSearch &&
+                    matchFilter
+                );
+            }
+        );
 
     count.textContent =
         `${filtered.length} item`;
 
     if (!filtered.length) {
+
         grid.innerHTML = `
             <div class="empty">
                 Tidak ada source yang cocok.
@@ -892,97 +2241,146 @@ function render() {
     }
 
     grid.innerHTML =
-        filtered.map(post => `
-            <article class="card">
+        filtered
+            .map(
+                post => `
+                    <article class="card">
 
-                <div class="card-top">
+                        <div class="card-top">
 
-                    <span class="lang">
-                        ${escapeHtml(
-                            post.language || 'Text'
-                        )}
-                    </span>
+                            <span class="lang">
+                                ${escapeHtml(
+                                    post.language ||
+                                    'Text'
+                                )}
+                            </span>
 
-                    <span class="size">
-                        ${formatSize(post.size)}
-                    </span>
+                            <span class="size">
+                                ${formatSize(
+                                    post.size
+                                )}
+                            </span>
 
-                </div>
+                        </div>
 
-                <h2>
-                    ${escapeHtml(post.title)}
-                </h2>
+                        <h2>
+                            ${escapeHtml(
+                                post.title
+                            )}
+                        </h2>
 
-                <p>
-                    ${escapeHtml(
-                        post.description ||
-                        'Tidak ada deskripsi.'
-                    )}
-                </p>
+                        <p>
+                            ${escapeHtml(
+                                post.description ||
+                                'Tidak ada deskripsi.'
+                            )}
+                        </p>
 
-                <div class="card-bottom">
+                        <div class="card-bottom">
 
-                    <span class="filename">
-                        ${escapeHtml(post.filename)}
-                    </span>
+                            <span class="filename">
+                                ${escapeHtml(
+                                    post.filename
+                                )}
+                            </span>
 
-                    <button
-                        class="open-btn"
-                        data-open="${escapeHtml(post.id)}"
-                    >
-                        Open
-                    </button>
+                            <button
+                                class="open-btn"
+                                type="button"
+                                data-open="${escapeHtml(
+                                    post.id
+                                )}"
+                            >
+                                Open
+                            </button>
 
-                </div>
+                        </div>
 
-            </article>
-        `).join('');
+                    </article>
+                `
+            )
+            .join('');
 }
 
+/* =========================================
+   LOAD POSTS
+========================================= */
+
 async function loadPosts() {
+
     try {
+
         const response =
             await fetch(
-                '/api?action=list'
+                '/api?action=list',
+                {
+                    method: 'GET',
+                    cache: 'no-store'
+                }
             );
 
         const data =
             await response.json();
 
-        if (!response.ok || !data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
+
             throw new Error(
                 data.error ||
                 'Gagal memuat data.'
             );
+
         }
 
         state.posts =
-            Array.isArray(data.posts)
+            Array.isArray(
+                data.posts
+            )
                 ? data.posts
                 : [];
 
         renderFilters();
+
         render();
 
         openFromUrl();
 
     } catch (error) {
+
         grid.innerHTML = `
             <div class="empty">
-                Gagal memuat source.<br>
+
+                Gagal memuat source.
+
+                <br>
+
                 <small>
-                    ${escapeHtml(error.message)}
+                    ${escapeHtml(
+                        error.message
+                    )}
                 </small>
+
             </div>
         `;
 
-        count.textContent = 'Error';
+        count.textContent =
+            'Error';
     }
 }
 
+/* =========================================
+   OPEN POST
+========================================= */
+
 async function openPost(id) {
+
     try {
-        modal.classList.add('active');
+
+        modal.classList.add(
+            'active'
+        );
 
         viewerTitle.textContent =
             'Loading...';
@@ -990,30 +2388,41 @@ async function openPost(id) {
         viewerMeta.textContent =
             'Mengambil source...';
 
-        code.textContent = '';
+        code.textContent =
+            '';
 
         const response =
             await fetch(
-                `/api?action=get&id=${encodeURIComponent(id)}`
+                `/api?action=get&id=${encodeURIComponent(
+                    id
+                )}`
             );
 
         const data =
             await response.json();
 
-        if (!response.ok || !data.ok) {
+        if (
+            !response.ok ||
+            !data.ok
+        ) {
+
             throw new Error(
                 data.error ||
                 'Source tidak ditemukan.'
             );
+
         }
 
-        state.current = data;
+        state.current =
+            data;
 
         viewerTitle.textContent =
             data.post.title;
 
         viewerMeta.textContent =
-            `${data.post.filename} • ${data.post.language} • ${formatSize(data.post.size)}`;
+            `${data.post.filename} • ${data.post.language} • ${formatSize(
+                data.post.size
+            )}`;
 
         code.textContent =
             data.code;
@@ -1021,53 +2430,92 @@ async function openPost(id) {
         history.replaceState(
             null,
             '',
-            `/share/${encodeURIComponent(id)}`
+            `/share/${encodeURIComponent(
+                id
+            )}`
         );
 
     } catch (error) {
-        modal.classList.remove('active');
-        showToast(error.message);
+
+        modal.classList.remove(
+            'active'
+        );
+
+        showToast(
+            error.message
+        );
     }
 }
 
+/* =========================================
+   CLOSE VIEWER
+========================================= */
+
 function closeViewer() {
-    modal.classList.remove('active');
-    state.current = null;
+
+    modal.classList.remove(
+        'active'
+    );
+
+    state.current =
+        null;
 
     if (
-        location.pathname.startsWith('/share/')
+        location.pathname.startsWith(
+            '/share/'
+        )
     ) {
+
         history.replaceState(
             null,
             '',
             '/'
         );
+
     }
 }
 
+/* =========================================
+   COPY CODE
+========================================= */
+
 async function copyCode() {
-    if (!state.current) return;
+
+    if (!state.current) {
+        return;
+    }
 
     try {
-        await navigator.clipboard.writeText(
-            state.current.code
-        );
+
+        await navigator
+            .clipboard
+            .writeText(
+                state.current.code
+            );
 
         showToast(
             'Code berhasil dicopy.'
         );
+
     } catch {
+
         const area =
-            document.createElement('textarea');
+            document.createElement(
+                'textarea'
+            );
 
         area.value =
             state.current.code;
 
-        document.body.appendChild(area);
+        document.body.appendChild(
+            area
+        );
 
         area.select();
 
-        document.execCommand('copy');
+        document.execCommand(
+            'copy'
+        );
 
         area.remove();
 
@@ -1077,51 +2525,82 @@ async function copyCode() {
     }
 }
 
+/* =========================================
+   DOWNLOAD CODE
+========================================= */
+
 function downloadCode() {
-    if (!state.current) return;
+
+    if (!state.current) {
+        return;
+    }
 
     const blob =
         new Blob(
-            [state.current.code],
+            [
+                state.current.code
+            ],
             {
-                type: 'text/plain;charset=utf-8'
+                type:
+                    'text/plain;charset=utf-8'
             }
         );
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
     const a =
-        document.createElement('a');
+        document.createElement(
+            'a'
+        );
 
-    a.href = url;
+    a.href =
+        url;
 
     a.download =
         state.current.post.filename ||
         'code.txt';
 
-    document.body.appendChild(a);
+    document.body.appendChild(
+        a
+    );
 
     a.click();
 
     a.remove();
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+        url
+    );
 }
 
+/* =========================================
+   OPEN RAW
+========================================= */
+
 function openRaw() {
-    if (!state.current) return;
+
+    if (!state.current) {
+        return;
+    }
 
     const blob =
         new Blob(
-            [state.current.code],
+            [
+                state.current.code
+            ],
             {
-                type: 'text/plain;charset=utf-8'
+                type:
+                    'text/plain;charset=utf-8'
             }
         );
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
     window.open(
         url,
@@ -1129,109 +2608,245 @@ function openRaw() {
         'noopener,noreferrer'
     );
 
-    setTimeout(() => {
-        URL.revokeObjectURL(url);
-    }, 5000);
+    setTimeout(
+        () => {
+
+            URL.revokeObjectURL(
+                url
+            );
+
+        },
+        5000
+    );
 }
 
+/* =========================================
+   OPEN FROM SHARE URL
+========================================= */
+
 function openFromUrl() {
+
     const match =
         location.pathname.match(
             /^\/share\/([^/]+)$/
         );
 
-    if (!match) return;
+    if (!match) {
+        return;
+    }
 
     const id =
-        decodeURIComponent(match[1]);
+        decodeURIComponent(
+            match[1]
+        );
 
     if (
         state.posts.some(
-            post => post.id === id
+            post =>
+                post.id === id
         )
     ) {
+
         openPost(id);
+
     }
 }
 
-search.addEventListener(
-    'input',
-    render
-);
+/* =========================================
+   SEARCH
+========================================= */
 
-filter.addEventListener(
-    'change',
-    render
-);
+if (search) {
 
-grid.addEventListener(
-    'click',
-    event => {
-        const button =
-            event.target.closest(
-                '[data-open]'
+    search.addEventListener(
+        'input',
+        render
+    );
+
+}
+
+/* =========================================
+   FILTER
+========================================= */
+
+if (filter) {
+
+    filter.addEventListener(
+        'change',
+        render
+    );
+
+}
+
+/* =========================================
+   GRID CLICK
+========================================= */
+
+if (grid) {
+
+    grid.addEventListener(
+        'click',
+        event => {
+
+            const button =
+                event.target.closest(
+                    '[data-open]'
+                );
+
+            if (!button) {
+                return;
+            }
+
+            openPost(
+                button.dataset.open
             );
 
-        if (!button) return;
+        }
+    );
 
-        openPost(
-            button.dataset.open
-        );
-    }
-);
+}
 
-document
-    .getElementById('closeBtn')
-    .addEventListener(
+/* =========================================
+   VIEWER BUTTONS
+========================================= */
+
+const closeBtn =
+    document.getElementById(
+        'closeBtn'
+    );
+
+const copyBtn =
+    document.getElementById(
+        'copyBtn'
+    );
+
+const downloadBtn =
+    document.getElementById(
+        'downloadBtn'
+    );
+
+const rawBtn =
+    document.getElementById(
+        'rawBtn'
+    );
+
+if (closeBtn) {
+
+    closeBtn.addEventListener(
         'click',
         closeViewer
     );
 
-document
-    .getElementById('copyBtn')
-    .addEventListener(
+}
+
+if (copyBtn) {
+
+    copyBtn.addEventListener(
         'click',
         copyCode
     );
 
-document
-    .getElementById('downloadBtn')
-    .addEventListener(
+}
+
+if (downloadBtn) {
+
+    downloadBtn.addEventListener(
         'click',
         downloadCode
     );
 
-document
-    .getElementById('rawBtn')
-    .addEventListener(
+}
+
+if (rawBtn) {
+
+    rawBtn.addEventListener(
         'click',
         openRaw
     );
 
-modal.addEventListener(
-    'click',
-    event => {
-        if (
-            event.target === modal
-        ) {
-            closeViewer();
+}
+
+/* =========================================
+   CLOSE VIEWER BY BACKDROP
+========================================= */
+
+if (modal) {
+
+    modal.addEventListener(
+        'click',
+        event => {
+
+            if (
+                event.target ===
+                modal
+            ) {
+
+                closeViewer();
+
+            }
+
         }
-    }
-);
+    );
+
+}
+
+/* =========================================
+   GLOBAL ESCAPE
+========================================= */
 
 document.addEventListener(
     'keydown',
     event => {
+
         if (
-            event.key === 'Escape' &&
-            modal.classList.contains('active')
+            event.key !==
+            'Escape'
         ) {
-            closeViewer();
+            return;
         }
+
+        if (
+            modal &&
+            modal.classList.contains(
+                'active'
+            )
+        ) {
+
+            closeViewer();
+
+        }
+
+        if (
+            channelOverlay &&
+            channelOverlay.classList.contains(
+                'active'
+            )
+        ) {
+
+            closeChannelPopup();
+
+        }
+
+        closePageMenu();
+
     }
 );
 
+/* =========================================
+   START
+========================================= */
+
 loadPosts();
+
+/*
+ * Popup channel muncul setelah
+ * halaman selesai mulai dirender.
+ */
+
+setTimeout(
+    showChannelPopup,
+    700
+);
 </script>
 
 </body>
