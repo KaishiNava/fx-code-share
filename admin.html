@@ -585,6 +585,37 @@
         .admin-page-menu a:hover, .admin-page-menu a.active-page { color: white; background: rgba(255,255,255,.08); }
         .admin-page-menu-icon { width: 27px; height: 27px; display: grid; place-items: center; border: 1px solid var(--border); border-radius: 8px; color: #aaa; font-size: 9px; font-weight: 800; }
         @media(max-width:700px) { .admin-menu-btn { width: 40px; height: 40px; } .admin-page-menu { width: 200px; } }
+        /* FX Project — Site Settings */
+        .site-settings { margin-top: 14px; }
+        .site-settings.hidden-view { display:none; }
+        .settings-grid { display:grid; grid-template-columns:1.15fr .85fr; gap:12px; }
+        .settings-card { border:1px solid var(--border); border-radius:14px; background:rgba(255,255,255,.025); padding:16px; }
+        .settings-card h2 { margin:0; font-size:13px; letter-spacing:-.02em; }
+        .settings-card p { margin:6px 0 14px; color:#666; font-size:10px; line-height:1.6; }
+        .settings-row { display:flex; gap:8px; align-items:center; }
+        .settings-row .search { flex:1; min-width:0; }
+        .toggle-row { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:12px; padding-top:12px; border-top:1px solid var(--border); }
+        .toggle-row label { color:#aaa; font-size:10px; }
+        .toggle { width:42px; height:24px; appearance:none; border:1px solid #333; border-radius:999px; background:#151515; position:relative; cursor:pointer; transition:.2s; }
+        .toggle:before { content:""; position:absolute; width:16px; height:16px; top:3px; left:3px; border-radius:50%; background:#777; transition:.2s; }
+        .toggle:checked { background:#eee; border-color:#eee; }
+        .toggle:checked:before { transform:translateX(18px); background:#111; }
+        .banner-preview { width:100%; aspect-ratio:16/9; overflow:hidden; border:1px solid var(--border); border-radius:13px; background:#080808; display:grid; place-items:center; color:#555; font-size:10px; }
+        .banner-preview img,.banner-preview video { width:100%; height:100%; object-fit:cover; display:block; }
+        .announcement-form { display:grid; grid-template-columns:1fr 150px; gap:8px; }
+        .announcement-form textarea { grid-column:1/-1; min-height:100px; resize:vertical; }
+        .announcement-form .full { grid-column:1/-1; }
+        .announcement-admin-list { display:grid; gap:8px; margin-top:12px; }
+        .announcement-admin-item { padding:13px; border:1px solid var(--border); border-radius:12px; background:rgba(255,255,255,.02); }
+        .announcement-admin-top { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+        .announcement-admin-title { font-size:11px; font-weight:700; color:#eee; }
+        .announcement-admin-meta { margin-top:4px; color:#555; font-size:9px; }
+        .announcement-admin-message { margin-top:9px; color:#aaa; font-size:10px; line-height:1.65; white-space:pre-wrap; word-break:break-word; }
+        .announcement-admin-actions { display:flex; gap:6px; margin-top:10px; }
+        .announcement-admin-actions button { padding:8px 10px; border-radius:8px; border:1px solid var(--border); background:#111; color:#bbb; font-size:9px; }
+        .announcement-admin-actions button.danger { border-color:#3a2020; background:#130909; color:#e58b8b; }
+        @media(max-width:900px){ .settings-grid{grid-template-columns:1fr;} }
+
         /* FX Project — Request Console */
         .request-console { padding-top: 6px; }
         .request-console.hidden-view { display: none; }
@@ -792,6 +823,58 @@
                 </div>
             </div>
 
+        </section>
+
+        <section class="panel site-settings">
+            <div class="panel-head">
+                <div>
+                    <div class="panel-title">SITE APPEARANCE</div>
+                    <div style="margin-top:5px;color:#666;font-size:10px;line-height:1.6;">Atur banner 16:9 dan pengumuman yang tampil di Code Share & Request Center.</div>
+                </div>
+                <button id="refreshSite" class="secondary" type="button">Refresh</button>
+            </div>
+
+            <div class="settings-grid">
+                <div class="settings-card">
+                    <h2>Banner 16:9</h2>
+                    <p>Masukkan URL PNG/JPG/WebP atau MP4/WebM. Mode Auto akan mendeteksi tipe dari ekstensi URL.</p>
+                    <div class="settings-row">
+                        <input id="bannerUrl" class="search" type="url" placeholder="https://example.com/banner.mp4" autocomplete="off">
+                        <select id="bannerType" class="search" style="max-width:120px">
+                            <option value="auto">Auto</option>
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                        </select>
+                    </div>
+                    <div class="toggle-row">
+                        <label for="bannerEnabled">Tampilkan banner di website</label>
+                        <input id="bannerEnabled" class="toggle" type="checkbox">
+                    </div>
+                    <button id="saveBanner" class="primary" type="button" style="margin-top:12px;width:100%">Save Banner</button>
+                </div>
+
+                <div class="settings-card">
+                    <h2>Preview</h2>
+                    <p>Preview mengikuti rasio 16:9. Video diputar muted, autoplay, dan loop.</p>
+                    <div id="bannerPreview" class="banner-preview">No banner</div>
+                </div>
+            </div>
+
+            <div class="settings-card" style="margin-top:12px">
+                <h2>Announcements</h2>
+                <p>Pengumuman yang aktif akan muncul di halaman publik. Semua data disimpan sebagai JSON di storage GitHub.</p>
+                <form id="announcementForm" class="announcement-form">
+                    <input id="announcementTitle" class="search" maxlength="120" placeholder="Judul pengumuman..." required>
+                    <select id="announcementType" class="search">
+                        <option value="info">Info</option>
+                        <option value="update">Update</option>
+                        <option value="warning">Warning</option>
+                    </select>
+                    <textarea id="announcementMessage" class="search full" maxlength="2000" placeholder="Isi pengumuman..." required></textarea>
+                    <button class="primary full" type="submit">Publish Announcement</button>
+                </form>
+                <div id="announcementAdminList" class="announcement-admin-list"></div>
+            </div>
         </section>
 
         <section class="panel">
@@ -1069,7 +1152,8 @@ requestConsoleLink.addEventListener('click', event => {
 const state = {
     posts: [],
     editing: null,
-    requests: []
+    requests: [],
+    site: { banner: {}, announcements: [] }
 };
 
 const loginScreen =
@@ -1129,6 +1213,16 @@ const adminSearch =
 
 const toast =
     document.getElementById('toast');
+
+const bannerUrlInput = document.getElementById('bannerUrl');
+const bannerTypeInput = document.getElementById('bannerType');
+const bannerEnabledInput = document.getElementById('bannerEnabled');
+const bannerPreview = document.getElementById('bannerPreview');
+const announcementForm = document.getElementById('announcementForm');
+const announcementTitle = document.getElementById('announcementTitle');
+const announcementType = document.getElementById('announcementType');
+const announcementMessage = document.getElementById('announcementMessage');
+const announcementAdminList = document.getElementById('announcementAdminList');
 
 function escapeHtml(value) {
     return String(value)
@@ -1268,6 +1362,126 @@ function goAdminView(view) {
     applyAdminView();
 }
 
+function renderBannerPreview() {
+    if (!bannerPreview) return;
+    const url = bannerUrlInput.value.trim();
+    const type = bannerTypeInput.value;
+    bannerPreview.innerHTML = '';
+    if (!url) { bannerPreview.textContent = 'No banner'; return; }
+    const clean = url.split('?')[0].split('#')[0].toLowerCase();
+    const video = type === 'video' || (type === 'auto' && /\.(mp4|webm|ogg|mov)$/.test(clean));
+    if (video) {
+        const el = document.createElement('video');
+        el.src = url; el.autoplay = true; el.muted = true; el.loop = true; el.playsInline = true; el.controls = true;
+        bannerPreview.appendChild(el);
+    } else {
+        const el = document.createElement('img');
+        el.src = url; el.alt = 'Banner preview';
+        bannerPreview.appendChild(el);
+    }
+}
+
+function formatAdminDate(value) {
+    if (!value) return '—';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return '—';
+    return date.toLocaleString('id-ID', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+}
+
+function renderAnnouncementAdminList() {
+    const items = Array.isArray(state.site.announcements) ? state.site.announcements : [];
+    if (!items.length) {
+        announcementAdminList.innerHTML = '<div class="request-empty">Belum ada pengumuman.</div>';
+        return;
+    }
+    announcementAdminList.innerHTML = items.map(item => `
+        <article class="announcement-admin-item">
+            <div class="announcement-admin-top">
+                <div>
+                    <div class="announcement-admin-title">${escapeHtml(item.title)}</div>
+                    <div class="announcement-admin-meta">${escapeHtml(item.id)} • ${item.active === false ? 'OFF' : 'ACTIVE'} • ${escapeHtml(formatAdminDate(item.updatedAt || item.createdAt))}</div>
+                </div>
+                <span class="status-pill ${item.active === false ? 'rejected' : 'done'}">${item.active === false ? 'OFF' : 'ACTIVE'}</span>
+            </div>
+            <div class="announcement-admin-message">${escapeHtml(item.message)}</div>
+            <div class="announcement-admin-actions">
+                <button type="button" data-announcement-toggle="${escapeHtml(item.id)}">${item.active === false ? 'Activate' : 'Disable'}</button>
+                <button type="button" class="danger" data-announcement-delete="${escapeHtml(item.id)}">Delete</button>
+            </div>
+        </article>
+    `).join('');
+}
+
+async function loadSiteAdmin() {
+    try {
+        const data = await api('site-admin');
+        state.site.banner = data.banner || {};
+        state.site.announcements = Array.isArray(data.announcements) ? data.announcements : [];
+        bannerUrlInput.value = state.site.banner.url || '';
+        bannerTypeInput.value = state.site.banner.type || 'auto';
+        bannerEnabledInput.checked = Boolean(state.site.banner.enabled && state.site.banner.url);
+        renderBannerPreview();
+        renderAnnouncementAdminList();
+    } catch (error) {
+        if (error.status === 401) { showLogin(); return; }
+        showToast(error.message);
+    }
+}
+
+bannerUrlInput.addEventListener('input', renderBannerPreview);
+bannerTypeInput.addEventListener('change', renderBannerPreview);
+
+document.getElementById('refreshSite').addEventListener('click', loadSiteAdmin);
+
+document.getElementById('saveBanner').addEventListener('click', async () => {
+    const button = document.getElementById('saveBanner');
+    button.disabled = true; button.textContent = 'Saving...';
+    try {
+        await api('banner-save', { method:'POST', body:JSON.stringify({ url:bannerUrlInput.value.trim(), type:bannerTypeInput.value, enabled:bannerEnabledInput.checked }) });
+        showToast('Banner berhasil disimpan.');
+        await loadSiteAdmin();
+    } catch (error) {
+        if (error.status === 401) showLogin();
+        showToast(error.message);
+    } finally { button.disabled=false; button.textContent='Save Banner'; }
+});
+
+announcementForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    try {
+        await api('announcement-create', { method:'POST', body:JSON.stringify({ title:announcementTitle.value.trim(), message:announcementMessage.value.trim(), type:announcementType.value, active:true }) });
+        announcementForm.reset();
+        showToast('Pengumuman berhasil dipublish.');
+        await loadSiteAdmin();
+    } catch (error) {
+        if (error.status === 401) showLogin();
+        showToast(error.message);
+    }
+});
+
+announcementAdminList.addEventListener('click', async event => {
+    const toggle = event.target.closest('[data-announcement-toggle]');
+    const del = event.target.closest('[data-announcement-delete]');
+    if (!toggle && !del) return;
+    const id = (toggle || del).dataset.announcementToggle || (toggle || del).dataset.announcementDelete;
+    const item = state.site.announcements.find(row => row.id === id);
+    if (!item) return;
+    try {
+        if (del) {
+            if (!confirm(`Hapus pengumuman "${item.title}"?`)) return;
+            await api('announcement-delete', { method:'POST', body:JSON.stringify({id}) });
+            showToast('Pengumuman dihapus.');
+        } else {
+            await api('announcement-status', { method:'POST', body:JSON.stringify({id, active:item.active === false}) });
+            showToast(item.active === false ? 'Pengumuman diaktifkan.' : 'Pengumuman dinonaktifkan.');
+        }
+        await loadSiteAdmin();
+    } catch (error) {
+        if (error.status === 401) showLogin();
+        showToast(error.message);
+    }
+});
+
 async function checkSession() {
     try {
         const data =
@@ -1276,6 +1490,7 @@ async function checkSession() {
         if (data.authenticated) {
             showApp();
             await loadPosts();
+            await loadSiteAdmin();
             await applyAdminView();
         } else {
             showLogin();
@@ -1335,6 +1550,8 @@ loginForm.addEventListener(
             showApp();
 
             await loadPosts();
+            await loadSiteAdmin();
+            await applyAdminView();
 
         } catch (error) {
             loginError.textContent =

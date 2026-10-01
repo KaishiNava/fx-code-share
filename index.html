@@ -371,6 +371,97 @@
         }
 
         /* =========================================
+           SITE BANNER + ANNOUNCEMENTS
+        ========================================= */
+
+        .site-visual {
+            width: min(1180px, calc(100% - 32px));
+            margin: 28px auto 0;
+        }
+
+        .site-banner {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            background: #090909;
+            box-shadow: 0 25px 80px rgba(0,0,0,.28);
+        }
+
+        .site-banner img,
+        .site-banner video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            background: #090909;
+        }
+
+        .site-banner::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(180deg, rgba(0,0,0,.03), rgba(0,0,0,.16));
+        }
+
+        .site-announcements {
+            display: grid;
+            gap: 9px;
+            margin-top: 12px;
+        }
+
+        .announcement {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 15px;
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            background: rgba(255,255,255,.035);
+            box-shadow: 0 12px 35px rgba(0,0,0,.15);
+        }
+
+        .announcement-mark {
+            width: 31px;
+            height: 31px;
+            flex: 0 0 31px;
+            display: grid;
+            place-items: center;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: rgba(255,255,255,.045);
+            color: #eee;
+            font-size: 9px;
+            font-weight: 800;
+        }
+
+        .announcement-content {
+            min-width: 0;
+        }
+
+        .announcement-title {
+            margin: 0 0 3px;
+            color: #eee;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .announcement-message {
+            margin: 0;
+            color: #888;
+            font-size: 11px;
+            line-height: 1.65;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .announcement.update .announcement-mark { border-color: #555; }
+        .announcement.warning .announcement-mark { color: #ddd; border-color: #444; }
+
+        /* =========================================
            HERO
         ========================================= */
 
@@ -1196,9 +1287,21 @@
                 width: 195px;
             }
 
+            .site-visual {
+                width: calc(100% - 22px);
+                margin-top: 18px;
+            }
+
+            .site-banner {
+                border-radius: 16px;
+            }
+
+            .announcement {
+                padding: 12px;
+            }
+
             .hero {
-                padding:
-                    55px 0 28px;
+                padding: 55px 0 28px;
             }
 
             h1 {
@@ -1396,6 +1499,11 @@
 </header>
 
 <main>
+
+    <section class="site-visual" id="siteVisual" hidden>
+        <div class="site-banner" id="siteBanner"></div>
+        <div class="site-announcements" id="siteAnnouncements"></div>
+    </section>
 
     <section class="hero">
 
@@ -1642,7 +1750,11 @@
 
 const state = {
     posts: [],
-    current: null
+    current: null,
+    site: {
+        banner: null,
+        announcements: []
+    }
 };
 
 /* =========================================
@@ -1675,6 +1787,15 @@ const code =
 
 const toast =
     document.getElementById('toast');
+
+const siteVisual =
+    document.getElementById('siteVisual');
+
+const siteBanner =
+    document.getElementById('siteBanner');
+
+const siteAnnouncements =
+    document.getElementById('siteAnnouncements');
 
 /* =========================================
    PAGE MENU
@@ -2034,6 +2155,106 @@ if (channelJoin) {
         }
     );
 
+}
+
+/* =========================================
+   SITE BANNER + ANNOUNCEMENTS
+========================================= */
+
+function escapeAttribute(value) {
+    return escapeHtml(value);
+}
+
+function renderSiteVisual() {
+    if (!siteVisual || !siteBanner || !siteAnnouncements) return;
+
+    const banner = state.site.banner || {};
+    const announcements = Array.isArray(state.site.announcements)
+        ? state.site.announcements
+        : [];
+
+    siteBanner.innerHTML = '';
+    siteAnnouncements.innerHTML = '';
+
+    let hasBanner = Boolean(banner.enabled && banner.url);
+
+    if (hasBanner) {
+        const type = String(banner.type || 'image').toLowerCase();
+
+        if (type === 'video') {
+            const video = document.createElement('video');
+            video.src = banner.url;
+            video.autoplay = true;
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.setAttribute('playsinline', '');
+            video.setAttribute('muted', '');
+            video.preload = 'metadata';
+            video.addEventListener('error', () => {
+                siteBanner.innerHTML = '';
+                siteBanner.hidden = true;
+                if (!siteAnnouncements.children.length) siteVisual.hidden = true;
+            });
+            siteBanner.appendChild(video);
+        } else {
+            const image = document.createElement('img');
+            image.src = banner.url;
+            image.alt = 'FX Project Banner';
+            image.loading = 'eager';
+            image.decoding = 'async';
+            image.addEventListener('error', () => {
+                siteBanner.innerHTML = '';
+                siteBanner.hidden = true;
+                if (!siteAnnouncements.children.length) siteVisual.hidden = true;
+            });
+            siteBanner.appendChild(image);
+        }
+
+        siteBanner.hidden = false;
+    } else {
+        siteBanner.hidden = true;
+    }
+
+    announcements.forEach(item => {
+        const wrapper = document.createElement('article');
+        const type = ['info', 'update', 'warning'].includes(item.type) ? item.type : 'info';
+        wrapper.className = `announcement ${type}`;
+        wrapper.innerHTML = `
+            <div class="announcement-mark">${type === 'warning' ? '!' : type === 'update' ? 'UP' : 'FX'}</div>
+            <div class="announcement-content">
+                <h3 class="announcement-title">${escapeHtml(item.title || 'Announcement')}</h3>
+                <p class="announcement-message">${escapeHtml(item.message || '')}</p>
+            </div>
+        `;
+        siteAnnouncements.appendChild(wrapper);
+    });
+
+    siteVisual.hidden = !hasBanner && announcements.length === 0;
+}
+
+async function loadSiteConfig() {
+    try {
+        const response = await fetch('/api?action=site', {
+            method: 'GET',
+            cache: 'no-store'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+            throw new Error(data.error || 'Gagal memuat konfigurasi website.');
+        }
+
+        state.site.banner = data.banner || null;
+        state.site.announcements = Array.isArray(data.announcements)
+            ? data.announcements
+            : [];
+
+        renderSiteVisual();
+    } catch (error) {
+        console.warn('[FX SITE]', error.message);
+    }
 }
 
 /* =========================================
@@ -2836,6 +3057,7 @@ document.addEventListener(
    START
 ========================================= */
 
+loadSiteConfig();
 loadPosts();
 
 /*
