@@ -2002,25 +2002,28 @@ async function actionEdit(
             newPath;
     }
 
+    const previousCodeFile =
+        await getGithubFile(
+            config,
+            current.storagePath
+        );
+
+    if (!previousCodeFile) {
+        sendError(
+            res,
+            404,
+            'File kode lama tidak ditemukan di storage.'
+        );
+
+        return;
+    }
+
     await putGithubFile(
         config,
         storagePath,
         code,
         `FX Project: update ${filename}`
     );
-
-    if (
-        current.storagePath !==
-        storagePath
-    ) {
-        try {
-            await deleteGithubFile(
-                config,
-                current.storagePath,
-                `FX Project: remove old ${current.filename}`
-            );
-        } catch {}
-    }
 
     const updated = {
         ...current,
@@ -2042,10 +2045,53 @@ async function actionEdit(
     posts[index] =
         updated;
 
-    await saveIndex(
-        config,
-        posts
-    );
+    try {
+        await saveIndex(
+            config,
+            posts
+        );
+    } catch (error) {
+        posts[index] =
+            current;
+
+        try {
+            if (
+                current.storagePath ===
+                storagePath
+            ) {
+                await putGithubFile(
+                    config,
+                    current.storagePath,
+                    previousCodeFile.content,
+                    `FX Project: rollback ${current.filename}`
+                );
+            } else {
+                await deleteGithubFile(
+                    config,
+                    storagePath,
+                    `FX Project: rollback update ${filename}`
+                );
+            }
+        } catch {}
+
+        throw error;
+    }
+
+    // Old source is removed only after index.json is committed.
+    if (
+        current.storagePath !==
+        storagePath
+    ) {
+        try {
+            await deleteGithubFile(
+                config,
+                current.storagePath,
+                `FX Project: remove old ${current.filename}`
+            );
+        } catch {
+            // Cleanup failure must not invalidate a successful edit.
+        }
+    }
 
     sendJson(
         res,
