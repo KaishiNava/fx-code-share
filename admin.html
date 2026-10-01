@@ -14,6 +14,11 @@
     >
 
     <title>FX Project — Admin</title>
+    <!-- FX Project favicon / developer logo -->
+    <link rel="icon" type="image/jpeg" href="https://zfile.web.id/555oanb.jpg">
+    <link rel="shortcut icon" type="image/jpeg" href="https://zfile.web.id/555oanb.jpg">
+    <link rel="apple-touch-icon" href="https://zfile.web.id/555oanb.jpg">
+
 
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
@@ -744,6 +749,10 @@
                             <span class="admin-page-menu-icon">RQ</span>
                             <span>Request Console</span>
                         </a>
+                        <a href="/donation">
+                            <span class="admin-page-menu-icon">♥</span>
+                            <span>Developer & Support</span>
+                        </a>
                     </nav>
                 </div>
                 <button
@@ -884,6 +893,15 @@
                 <div class="panel-title">
                     SOURCE LIBRARY
                 </div>
+
+                <button
+                    id="refreshSources"
+                    class="small-btn"
+                    type="button"
+                    title="Refresh source library"
+                >
+                    Refresh
+                </button>
 
                 <input
                     id="adminSearch"
@@ -1268,22 +1286,64 @@ async function api(
     action,
     options = {}
 ) {
+    const {
+        query = {},
+        ...fetchOptions
+    } = options;
+
+    const params =
+        new URLSearchParams();
+
+    params.set(
+        'action',
+        action
+    );
+
+    if (
+        query &&
+        typeof query === 'object'
+    ) {
+        Object.entries(query).forEach(
+            ([key, value]) => {
+                if (
+                    value !== undefined &&
+                    value !== null
+                ) {
+                    params.set(
+                        key,
+                        String(value)
+                    );
+                }
+            }
+        );
+    }
+
     const response =
         await fetch(
-            `/api?action=${encodeURIComponent(action)}`,
+            `/api?${params.toString()}`,
             {
                 credentials: 'same-origin',
-                ...options,
+                ...fetchOptions,
                 headers: {
                     'Content-Type':
                         'application/json',
-                    ...(options.headers || {})
+                    ...(fetchOptions.headers || {})
                 }
             }
         );
 
-    const data =
-        await response.json();
+    let data = {};
+
+    try {
+        data =
+            await response.json();
+    } catch {
+        data = {
+            ok: false,
+            error:
+                `Server mengembalikan respons ${response.status}.`
+        };
+    }
 
     if (
         !response.ok ||
@@ -2033,13 +2093,44 @@ tableBody.addEventListener(
                         editButton.dataset.edit
                 );
 
-            if (!post) return;
+            if (!post) {
+                showToast(
+                    'Source tidak ditemukan di daftar admin. Silakan refresh.'
+                );
+
+                return;
+            }
+
+            if (editButton.disabled) {
+                return;
+            }
+
+            const originalText =
+                editButton.textContent;
+
+            editButton.disabled = true;
+            editButton.textContent =
+                'Loading...';
 
             try {
                 const data =
                     await api(
-                        `get&id=${encodeURIComponent(post.id)}`
+                        'get',
+                        {
+                            query: {
+                                id: post.id
+                            }
+                        }
                     );
+
+                if (
+                    !data.post ||
+                    typeof data.code !== 'string'
+                ) {
+                    throw new Error(
+                        'Data source tidak lengkap dari server.'
+                    );
+                }
 
                 openModal({
                     ...data.post,
@@ -2056,9 +2147,23 @@ tableBody.addEventListener(
                     );
 
             } catch (error) {
+                if (
+                    error.status === 401
+                ) {
+                    showLogin();
+                }
+
                 showToast(
-                    error.message
+                    error.message ||
+                    'Gagal mengambil source.'
                 );
+
+            } finally {
+                editButton.disabled =
+                    false;
+
+                editButton.textContent =
+                    originalText;
             }
         }
 
@@ -2125,6 +2230,39 @@ adminSearch.addEventListener(
     renderTable
 );
 
+document
+    .getElementById('refreshSources')
+    ?.addEventListener(
+        'click',
+        async () => {
+            const button =
+                document.getElementById(
+                    'refreshSources'
+                );
+
+            if (!button) return;
+
+            button.disabled = true;
+
+            const originalText =
+                button.textContent;
+
+            button.textContent =
+                'Refreshing...';
+
+            try {
+                await loadPosts();
+                showToast(
+                    'Source Library diperbarui.'
+                );
+            } finally {
+                button.disabled = false;
+                button.textContent =
+                    originalText;
+            }
+        }
+    );
+
 requestSearch.addEventListener('input', renderRequests);
 requestFilter.addEventListener('change', renderRequests);
 document.getElementById('refreshRequests').addEventListener('click', loadRequests);
@@ -2164,6 +2302,18 @@ window.addEventListener('popstate', () => {
     if (!loginScreen.classList.contains('hidden')) return;
     applyAdminView();
 });
+
+document.addEventListener(
+    'keydown',
+    event => {
+        if (
+            event.key === 'Escape' &&
+            editorModal.classList.contains('active')
+        ) {
+            closeModal();
+        }
+    }
+);
 
 checkSession();
 </script>

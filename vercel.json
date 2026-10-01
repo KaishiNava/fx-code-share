@@ -14,6 +14,10 @@
       "destination": "/admin.html"
     },
     {
+      "source": "/donation",
+      "destination": "/donation.html"
+    },
+    {
       "source": "/request",
       "destination": "/request.html"
     },

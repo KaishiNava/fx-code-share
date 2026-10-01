@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="theme-color" content="#050505">
+<meta name="description" content="Dukung FX Project dan kenali developer di balik project ini — KYZX.">
+<title>Developer & Support — FX Project</title>
+    <!-- FX Project favicon / developer logo -->
+    <link rel="icon" type="image/jpeg" href="https://zfile.web.id/555oanb.jpg">
+    <link rel="shortcut icon" type="image/jpeg" href="https://zfile.web.id/555oanb.jpg">
+    <link rel="apple-touch-icon" href="https://zfile.web.id/555oanb.jpg">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#050505;--panel:#0c0c0c;--panel2:#101010;--border:rgba(255,255,255,.09);--hover:rgba(255,255,255,.18);--text:#f5f5f5;--muted:#8d8d8d;--dim:#5f5f5f;--green:#45d483;--radius:20px}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(circle at 50% -12%,rgba(255,255,255,.09),transparent 34%),var(--bg);color:var(--text);font-family:Inter,sans-serif}a{color:inherit;text-decoration:none}button{font:inherit;cursor:pointer}::selection{background:#fff;color:#000}
+.topbar{position:sticky;top:0;z-index:100;height:70px;display:flex;align-items:center;border-bottom:1px solid var(--border);background:rgba(5,5,5,.78);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}.topbar-inner{width:min(1180px,calc(100% - 32px));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:-.04em}.brand-mark{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#000;background:#fff;font-size:14px;font-weight:900}.brand span{font-size:16px}.brand small{display:block;color:#777;font-size:10px;font-weight:500;letter-spacing:.04em;margin-top:2px}.header-actions{display:flex;align-items:center;gap:7px}.admin-link{border:1px solid var(--border);background:rgba(255,255,255,.035);border-radius:12px;padding:9px 13px;color:#ddd;font-size:13px;transition:.2s}.admin-link:hover{border-color:var(--hover);background:rgba(255,255,255,.07)}
+.menu-wrap{position:relative;z-index:110}.menu-btn{position:relative;z-index:111;width:42px;height:42px;display:grid;place-items:center;padding:0;border:1px solid var(--border);background:rgba(255,255,255,.035);color:#eee;border-radius:12px;transition:.2s;-webkit-tap-highlight-color:transparent;appearance:none;touch-action:manipulation}.menu-btn:hover,.menu-btn.active{border-color:var(--hover);background:rgba(255,255,255,.08)}.menu-btn:active{transform:scale(.94)}.menu-lines{width:18px;height:14px;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none}.menu-lines span{width:100%;height:2px;border-radius:3px;background:currentColor;transition:.2s}.menu-btn.active .menu-lines span:nth-child(1){transform:translateY(6px) rotate(45deg)}.menu-btn.active .menu-lines span:nth-child(2){opacity:0}.menu-btn.active .menu-lines span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}.page-menu{position:absolute;top:calc(100% + 10px);right:0;width:230px;padding:7px;border:1px solid var(--hover);border-radius:15px;background:rgba(12,12,12,.98);box-shadow:0 20px 60px rgba(0,0,0,.55);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px) scale(.97);transform-origin:top right;transition:.18s;z-index:120}.page-menu.active{opacity:1;visibility:visible;pointer-events:auto;transform:none}.page-menu-label{padding:7px 9px 6px;color:#666;font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase}.page-menu a{display:flex;align-items:center;gap:10px;padding:11px 10px;border-radius:10px;color:#bbb;font-size:11px;font-weight:600}.page-menu a:hover,.page-menu a.active-page{color:#fff;background:rgba(255,255,255,.08)}.page-menu-icon{width:27px;height:27px;display:grid;place-items:center;flex:0 0 27px;border:1px solid var(--border);border-radius:8px;color:#aaa;font-size:9px;font-weight:800}
+main{width:min(1180px,calc(100% - 32px));margin:auto;padding:62px 0 90px}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid var(--border);border-radius:999px;color:#cfcfcf;background:rgba(255,255,255,.025);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 12px rgba(69,212,131,.5)}.hero{max-width:820px;padding-top:17px}.hero h1{margin:20px 0 15px;font-size:clamp(44px,8vw,84px);line-height:.91;letter-spacing:-.078em}.hero h1 span{color:#777}.hero p{max-width:700px;margin:0;color:var(--muted);font-size:14px;line-height:1.8}.hero-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:24px}.primary,.secondary{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:12px 16px;border-radius:12px;font-size:11px;font-weight:800;transition:.18s}.primary{border:1px solid #fff;background:#fff;color:#050505}.primary:hover{background:#e8e8e8;transform:translateY(-1px)}.secondary{border:1px solid var(--border);background:rgba(255,255,255,.035);color:#ddd}.secondary:hover{border-color:#555;background:rgba(255,255,255,.07)}
+.section{margin-top:48px}.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:15px}.section-kicker{color:#666;font:600 9px/1.2 "JetBrains Mono",monospace;letter-spacing:.12em;text-transform:uppercase}.section-title{margin:5px 0 0;font-size:24px;letter-spacing:-.045em}.section-desc{max-width:600px;color:#777;font-size:11px;line-height:1.7}
+.profile-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(300px,.85fr);gap:12px}.card{border:1px solid var(--border);border-radius:20px;background:linear-gradient(145deg,rgba(255,255,255,.045),rgba(255,255,255,.015));box-shadow:0 20px 70px rgba(0,0,0,.2)}.profile-card{padding:22px}.profile-top{display:flex;align-items:center;gap:15px}.avatar{width:64px;height:64px;flex:0 0 64px;border:1px solid #fff;border-radius:18px;display:grid;place-items:center;background:#fff;color:#050505;font-size:21px;font-weight:900;letter-spacing:-.08em}.avatar-image{overflow:hidden;background:#fff}.avatar-image img{width:100%;height:100%;display:block;object-fit:cover}.profile-name{font-size:22px;font-weight:800;letter-spacing:-.05em}.profile-role{margin-top:4px;color:#777;font-size:10px}.profile-bio{margin:22px 0 0;color:#aaa;font-size:12px;line-height:1.85}.profile-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:19px}.meta-box{padding:12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.025)}.meta-box small{display:block;color:#555;font-size:8px;letter-spacing:.08em;text-transform:uppercase}.meta-box strong{display:block;margin-top:5px;color:#ddd;font-size:11px}.stack-card{padding:22px}.stack-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:16px}.stack{padding:8px 10px;border:1px solid var(--border);border-radius:9px;background:#090909;color:#bbb;font:500 9px "JetBrains Mono",monospace}.focus-list{display:grid;gap:8px;margin-top:17px}.focus{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.055)}.focus:last-child{border-bottom:0}.focus-num{width:24px;height:24px;display:grid;place-items:center;border:1px solid var(--border);border-radius:7px;color:#777;font:600 8px "JetBrains Mono",monospace}.focus strong{display:block;color:#ddd;font-size:10px}.focus span{display:block;margin-top:3px;color:#666;font-size:9px;line-height:1.55}
+.skills{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}.skill{min-height:112px;padding:16px;border:1px solid var(--border);border-radius:15px;background:rgba(255,255,255,.025);transition:.18s}.skill:hover{transform:translateY(-2px);border-color:#333;background:rgba(255,255,255,.045)}.skill-code{color:#666;font:600 9px "JetBrains Mono",monospace}.skill h3{margin:12px 0 6px;font-size:12px}.skill p{margin:0;color:#666;font-size:9px;line-height:1.55}
+.project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.project{padding:18px;border:1px solid var(--border);border-radius:15px;background:rgba(255,255,255,.025)}.project-mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid var(--border);border-radius:10px;background:#fff;color:#050505;font-size:10px;font-weight:900}.project h3{margin:14px 0 6px;font-size:12px}.project p{margin:0;color:#777;font-size:10px;line-height:1.7}
+.support{position:relative;overflow:hidden;padding:28px;border:1px solid rgba(255,255,255,.16);border-radius:22px;background:radial-gradient(circle at 85% 15%,rgba(255,255,255,.11),transparent 30%),linear-gradient(145deg,#111,#080808);box-shadow:0 25px 90px rgba(0,0,0,.3)}.support::before{content:"FX";position:absolute;right:20px;bottom:-35px;color:rgba(255,255,255,.025);font-size:150px;font-weight:900;letter-spacing:-.1em;pointer-events:none}.support>*{position:relative;z-index:1}.support h2{margin:0;font-size:27px;letter-spacing:-.055em}.support p{max-width:690px;margin:9px 0 19px;color:#888;font-size:11px;line-height:1.75}.support-link{display:inline-flex;align-items:center;gap:9px;padding:13px 17px;border-radius:12px;background:#fff;color:#050505;font-size:11px;font-weight:900}.support-link:hover{background:#e8e8e8}.url-line{margin-top:13px;color:#555;font:9px "JetBrains Mono",monospace;word-break:break-all}
+.footer{margin-top:55px;padding-top:18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:15px;color:#555;font-size:9px}.footer strong{color:#777}.footer a:hover{color:#aaa}
+@media(max-width:850px){.profile-grid{grid-template-columns:1fr}.skills{grid-template-columns:repeat(2,1fr)}.project-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.topbar{height:62px}.topbar-inner{width:calc(100% - 22px)}.admin-link{padding:8px 10px;font-size:11px}main{width:calc(100% - 22px);padding:48px 0 70px}.hero h1{font-size:50px}.page-menu{width:205px}.profile-card,.stack-card{padding:17px}.profile-meta{grid-template-columns:1fr}.skills{grid-template-columns:1fr 1fr}.project-grid{grid-template-columns:1fr}.support{padding:22px}.support h2{font-size:24px}.footer{flex-direction:column;align-items:flex-start}}
+@media(max-width:380px){.admin-link{display:none}.skills{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="topbar">
+<div class="topbar-inner">
+<a href="/" class="brand"><div class="brand-mark">FX</div><div><span>FX Project</span><small>DEVELOPER & SUPPORT</small></div></a>
+<div class="header-actions">
+<a href="/admin" class="admin-link">Admin</a>
+<div class="menu-wrap" id="menuWrap">
+<button class="menu-btn" id="menuBtn" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="pageMenu"><span class="menu-lines" aria-hidden="true"><span></span><span></span><span></span></span></button>
+<nav class="page-menu" id="pageMenu" aria-label="Navigasi halaman">
+<div class="page-menu-label">Pages</div>
+<a href="/"><span class="page-menu-icon">FX</span><span>Code Share</span></a>
+<a href="/request"><span class="page-menu-icon">RQ</span><span>Request Scrape</span></a>
+<a href="/donation" class="active-page"><span class="page-menu-icon">♥</span><span>Developer & Support</span></a>
+<a href="/admin"><span class="page-menu-icon">AD</span><span>Admin Console</span></a>
+</nav>
+</div>
+</div>
+</div>
+</header>
+
+<main>
+<section class="hero">
+<div class="eyebrow"><span class="dot"></span> FX Project · Developer Profile</div>
+<h1>Meet <span>KYZX.</span><br>Build. Share. Improve.</h1>
+<p>KYZX adalah developer di balik FX Project, sebuah project yang berfokus pada pengembangan tools, code sharing, API, automation, dan berbagai eksperimen web development. Halaman ini dibuat untuk mengenal developer dan menjadi tempat bagi kamu yang ingin ikut mendukung pengembangan FX Project.</p>
+<div class="hero-actions"><a class="primary" href="https://sociabuzz.com/kyzx_fx/tribe" target="_blank" rel="noopener noreferrer">♥ Dukung FX Project</a><a class="secondary" href="#profile">Lihat Profil</a></div>
+</section>
+
+<section class="section" id="profile">
+<div class="section-head"><div><div class="section-kicker">01 / Profile</div><h2 class="section-title">Developer Profile</h2></div><div class="section-desc">Identitas singkat dan fokus pengembangan yang digunakan dalam ekosistem FX Project.</div></div>
+<div class="profile-grid">
+<article class="card profile-card">
+<div class="profile-top"><div class="avatar avatar-image"><img src="https://zfile.web.id/555oanb.jpg" alt="KYZX — FX Project Developer" loading="eager" decoding="async" referrerpolicy="no-referrer"></div><div><div class="profile-name">KYZX</div><div class="profile-role">Developer · Creator of FX Project</div></div></div>
+<p class="profile-bio">KYZX merupakan creator dan developer FX Project. Fokus utamanya adalah membangun pengalaman web yang praktis, clean, responsive, dan bisa digunakan untuk berbagi source code maupun tools. FX Project dikembangkan sebagai ruang untuk membuat, menguji, mendokumentasikan, dan membagikan berbagai project developer.</p>
+<div class="profile-meta"><div class="meta-box"><small>Identity</small><strong>KYZX</strong></div><div class="meta-box"><small>Project</small><strong>FX Project</strong></div><div class="meta-box"><small>Focus</small><strong>Web & Tools</strong></div></div>
+</article>
+<article class="card stack-card"><div class="section-kicker">Current Stack</div><div class="stack-list"><span class="stack">HTML</span><span class="stack">CSS</span><span class="stack">JavaScript</span><span class="stack">Node.js</span><span class="stack">REST API</span><span class="stack">JSON</span><span class="stack">GitHub</span><span class="stack">Vercel</span></div><div class="focus-list"><div class="focus"><div class="focus-num">01</div><div><strong>Web Development</strong><span>Interface responsive dan web tools yang fokus pada usability.</span></div></div><div class="focus"><div class="focus-num">02</div><div><strong>Backend & API</strong><span>Endpoint, serverless function, autentikasi, dan integrasi data.</span></div></div><div class="focus"><div class="focus-num">03</div><div><strong>Automation & Data</strong><span>Eksperimen automation, data processing, scraping, dan workflow developer.</span></div></div></div></article>
+</div>
+</section>
+
+<section class="section">
+<div class="section-head"><div><div class="section-kicker">02 / Skills</div><h2 class="section-title">Developer Skills</h2></div><div class="section-desc">Teknologi dan area yang digunakan dalam project-project FX Project.</div></div>
+<div class="skills">
+<article class="skill"><div class="skill-code">01 / FRONTEND</div><h3>HTML · CSS · JavaScript</h3><p>Membangun interface modern, responsive, interactive, dan mobile-friendly.</p></article>
+<article class="skill"><div class="skill-code">02 / BACKEND</div><h3>Node.js · REST API</h3><p>Membuat backend, endpoint API, proses request, autentikasi, dan server-side logic.</p></article>
+<article class="skill"><div class="skill-code">03 / DATA</div><h3>JSON · GitHub Storage</h3><p>Mengelola struktur data, konfigurasi, metadata, dan penyimpanan project.</p></article>
+<article class="skill"><div class="skill-code">04 / TOOLING</div><h3>Automation · Scraping</h3><p>Mengembangkan workflow untuk pengolahan data, automation, dan developer utilities.</p></article>
+</div>
+</section>
+
+<section class="section">
+<div class="section-head"><div><div class="section-kicker">03 / FX Project</div><h2 class="section-title">What is FX Project?</h2></div><div class="section-desc">Ekosistem project yang dibuat untuk eksperimen, development, sharing, dan utility.</div></div>
+<div class="project-grid">
+<article class="project"><div class="project-mark">FX</div><h3>Code Share</h3><p>Tempat berbagi source code dan project agar lebih mudah ditemukan, dibaca, dan digunakan.</p></article>
+<article class="project"><div class="project-mark">API</div><h3>Developer Tools</h3><p>Berbagai tools dan API yang mendukung kebutuhan development, data, dan automation.</p></article>
+<article class="project"><div class="project-mark">RQ</div><h3>Request Center</h3><p>Tempat pengguna mengirim ide atau request scrape yang kemudian dapat dikelola melalui console.</p></article>
+</div>
+</section>
+
+<section class="section">
+<div class="support">
+<div class="section-kicker">04 / Support</div>
+<h2>Support the work behind FX Project.</h2>
+<p>Kalau kamu merasa tools, source code, atau project dari FX Project bermanfaat, kamu bisa memberikan dukungan melalui Sociabuzz. Dukungan yang diberikan dapat membantu proses pengembangan, maintenance, eksperimen, dan pembuatan project berikutnya.</p>
+<a class="support-link" href="https://sociabuzz.com/kyzx_fx/tribe" target="_blank" rel="noopener noreferrer">♥ Support KYZX on Sociabuzz ↗</a>
+<div class="url-line">sociabuzz.com/kyzx_fx/tribe</div>
+</div>
+</section>
+
+<footer class="footer"><div>© <span id="year"></span> <strong>FX Project</strong> · Created by KYZX</div><a href="/">Back to Code Share →</a></footer>
+</main>
+<script>
+'use strict';
+const menuBtn=document.getElementById('menuBtn');const pageMenu=document.getElementById('pageMenu');const menuWrap=document.getElementById('menuWrap');
+function closeMenu(){pageMenu.classList.remove('active');menuBtn.classList.remove('active');menuBtn.setAttribute('aria-expanded','false')}
+menuBtn.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();const active=pageMenu.classList.toggle('active');menuBtn.classList.toggle('active',active);menuBtn.setAttribute('aria-expanded',String(active))});pageMenu.addEventListener('click',e=>e.stopPropagation());document.addEventListener('click',e=>{if(!menuWrap.contains(e.target))closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});document.getElementById('year').textContent=new Date().getFullYear();
+</script>
+</body>
+</html>
