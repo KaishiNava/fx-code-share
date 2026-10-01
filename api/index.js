@@ -53,6 +53,8 @@ const EXTENSIONS = {
 
 const DATA_PATH = 'data/index.json';
 const REQUEST_PATH = 'requests/index.json';
+const BANNER_PATH = 'config/banner.json';
+const ANNOUNCEMENT_PATH = 'announcements/index.json';
 
 /* ============================================================
    ENVIRONMENT
@@ -611,6 +613,285 @@ async function saveRequests(
     );
 
     return requests;
+}
+
+/* ============================================================
+   SITE BANNER / ANNOUNCEMENTS STORAGE
+============================================================ */
+
+const DEFAULT_BANNER = {
+    enabled: false,
+    url: '',
+    type: 'auto',
+    updatedAt: null
+};
+
+async function getBanner(config) {
+    const file = await getGithubFile(config, BANNER_PATH);
+
+    if (!file) {
+        return { ...DEFAULT_BANNER };
+    }
+
+    const parsed = parseJsonSafely(file.content, DEFAULT_BANNER);
+
+    return {
+        ...DEFAULT_BANNER,
+        ...(parsed && typeof parsed === 'object' ? parsed : {})
+    };
+}
+
+async function saveBanner(config, banner) {
+    await putGithubFile(
+        config,
+        BANNER_PATH,
+        JSON.stringify(banner, null, 2),
+        'FX Project: update site banner'
+    );
+
+    return banner;
+}
+
+async function getAnnouncements(config) {
+    const file = await getGithubFile(config, ANNOUNCEMENT_PATH);
+
+    if (!file) {
+        return [];
+    }
+
+    const parsed = parseJsonSafely(file.content, []);
+
+    return Array.isArray(parsed) ? parsed : [];
+}
+
+async function saveAnnouncements(config, announcements) {
+    await putGithubFile(
+        config,
+        ANNOUNCEMENT_PATH,
+        JSON.stringify(announcements, null, 2),
+        'FX Project: update announcements'
+    );
+
+    return announcements;
+}
+
+function validHttpUrl(value) {
+    try {
+        const url = new URL(String(value || '').trim());
+        return url.protocol === 'http:' || url.protocol === 'https:';
+    } catch {
+        return false;
+    }
+}
+
+function inferBannerType(url, requestedType = 'auto') {
+    const type = String(requestedType || 'auto').toLowerCase();
+
+    if (type === 'image' || type === 'video') {
+        return type;
+    }
+
+    const clean = String(url || '').split('?')[0].split('#')[0].toLowerCase();
+
+    if (/\.(mp4|webm|ogg|mov)$/.test(clean)) {
+        return 'video';
+    }
+
+    return 'image';
+}
+
+/* ============================================================
+   PUBLIC SITE CONFIG
+============================================================ */
+
+async function actionSite(req, res, config) {
+    const banner = await getBanner(config);
+    const announcements = await getAnnouncements(config);
+
+    const activeAnnouncements = announcements
+        .filter(item => item && item.active !== false)
+        .sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime())
+        .slice(0, 20);
+
+    sendJson(
+        res,
+        200,
+        {
+            ok: true,
+            banner: {
+                enabled: Boolean(banner.enabled && banner.url),
+                url: banner.url || '',
+                type: inferBannerType(banner.url, banner.type)
+            },
+            announcements: activeAnnouncements
+        },
+        { 'Cache-Control': 'no-store' }
+    );
+}
+
+/* ============================================================
+   ADMIN SITE CONFIG
+============================================================ */
+
+async function requireAdmin(req, res, config) {
+    if (!isAuthenticated(req, config)) {
+        sendError(res, 401, 'Unauthorized.');
+        return false;
+    }
+
+    return true;
+}
+
+async function actionSiteAdmin(req, res, config) {
+    if (!(await requireAdmin(req, res, config))) return;
+
+    const banner = await getBanner(config);
+    const announcements = await getAnnouncements(config);
+
+    announcements.sort((a, b) => new Date(b.updatedAt || b.createdAt).getTime() - new Date(a.updatedAt || a.createdAt).getTime());
+
+    sendJson(res, 200, {
+        ok: true,
+        banner,
+        announcements
+    }, { 'Cache-Control': 'no-store' });
+}
+
+async function actionBannerSave(req, res, config) {
+    if (!(await requireAdmin(req, res, config))) return;
+
+    const body = await readBody(req);
+    const url = cleanText(body.url, 2000);
+    const type = ['auto', 'image', 'video'].includes(String(body.type || 'auto').toLowerCase())
+        ? String(body.type || 'auto').toLowerCase()
+        : 'auto';
+
+    if (url && !validHttpUrl(url)) {
+        sendError(res, 400, 'URL banner harus menggunakan http:// atau https://.');
+        return;
+    }
+
+    const banner = {
+        enabled: Boolean(body.enabled && url),
+        url,
+        type,
+        updatedAt: new Date().toISOString()
+    };
+
+    await saveBanner(config, banner);
+
+    sendJson(res, 200, {
+        ok: true,
+        message: banner.enabled ? 'Banner berhasil disimpan.' : 'Banner dinonaktifkan.',
+        banner
+    });
+}
+
+async function actionAnnouncementCreate(req, res, config) {
+    if (!(await requireAdmin(req, res, config))) return;
+
+    const body = await readBody(req);
+    const title = cleanText(body.title, 120);
+    const message = cleanText(body.message, 2000);
+    const type = ['info', 'update', 'warning'].includes(String(body.type || 'info').toLowerCase())
+        ? String(body.type || 'info').toLowerCase()
+        : 'info';
+
+    if (title.length < 2) {
+        sendError(res, 400, 'Judul pengumuman terlalu pendek.');
+        return;
+    }
+
+    if (message.length < 2) {
+        sendError(res, 400, 'Isi pengumuman wajib diisi.');
+        return;
+    }
+
+    const announcements = await getAnnouncements(config);
+    const now = new Date().toISOString();
+
+    const item = {
+        id: `AN${safeId()}`,
+        title,
+        message,
+        type,
+        active: body.active !== false,
+        createdAt: now,
+        updatedAt: now
+    };
+
+    announcements.unshift(item);
+    await saveAnnouncements(config, announcements);
+
+    sendJson(res, 201, {
+        ok: true,
+        message: 'Pengumuman berhasil dibuat.',
+        announcement: item
+    });
+}
+
+async function actionAnnouncementStatus(req, res, config) {
+    if (!(await requireAdmin(req, res, config))) return;
+
+    const body = await readBody(req);
+    const id = cleanText(body.id, 80);
+    const active = Boolean(body.active);
+
+    if (!id) {
+        sendError(res, 400, 'ID pengumuman tidak ada.');
+        return;
+    }
+
+    const announcements = await getAnnouncements(config);
+    const index = announcements.findIndex(item => item.id === id);
+
+    if (index === -1) {
+        sendError(res, 404, 'Pengumuman tidak ditemukan.');
+        return;
+    }
+
+    announcements[index] = {
+        ...announcements[index],
+        active,
+        updatedAt: new Date().toISOString()
+    };
+
+    await saveAnnouncements(config, announcements);
+
+    sendJson(res, 200, {
+        ok: true,
+        message: active ? 'Pengumuman diaktifkan.' : 'Pengumuman dinonaktifkan.',
+        announcement: announcements[index]
+    });
+}
+
+async function actionAnnouncementDelete(req, res, config) {
+    if (!(await requireAdmin(req, res, config))) return;
+
+    const body = await readBody(req);
+    const id = cleanText(body.id, 80);
+
+    if (!id) {
+        sendError(res, 400, 'ID pengumuman tidak ada.');
+        return;
+    }
+
+    const announcements = await getAnnouncements(config);
+    const index = announcements.findIndex(item => item.id === id);
+
+    if (index === -1) {
+        sendError(res, 404, 'Pengumuman tidak ditemukan.');
+        return;
+    }
+
+    const deleted = announcements.splice(index, 1)[0];
+    await saveAnnouncements(config, announcements);
+
+    sendJson(res, 200, {
+        ok: true,
+        message: 'Pengumuman berhasil dihapus.',
+        announcement: deleted
+    });
 }
 
 /* ============================================================
@@ -2532,6 +2813,62 @@ module.exports =
                     config
                 );
 
+                return;
+            }
+
+            /* ====================================================
+               PUBLIC SITE CONFIG
+            ==================================================== */
+
+            if (
+                req.method === 'GET' &&
+                action === 'site'
+            ) {
+                await actionSite(req, res, config);
+                return;
+            }
+
+            /* ====================================================
+               ADMIN SITE CONFIG
+            ==================================================== */
+
+            if (
+                req.method === 'GET' &&
+                action === 'site-admin'
+            ) {
+                await actionSiteAdmin(req, res, config);
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'banner-save'
+            ) {
+                await actionBannerSave(req, res, config);
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'announcement-create'
+            ) {
+                await actionAnnouncementCreate(req, res, config);
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'announcement-status'
+            ) {
+                await actionAnnouncementStatus(req, res, config);
+                return;
+            }
+
+            if (
+                req.method === 'POST' &&
+                action === 'announcement-delete'
+            ) {
+                await actionAnnouncementDelete(req, res, config);
                 return;
             }
 
